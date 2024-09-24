@@ -93,7 +93,7 @@ body{
 }
 
 .form{
-	border: 4px solid #8a6225;
+	border: 4px solid #997b21;
 	border-radius: 20px;
 	width: 85%;
 	gap: 30px;
@@ -177,6 +177,15 @@ body{
 	.logo{
 		width: 190px;
 	}
+	
+	.QR{
+	    border-radius: 0px;
+    }
+
+    .logoQR{
+	    width: 50px;
+	    border-radius: 0px;
+   }
 	
 	.form{
 		width: 95%;

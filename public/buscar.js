@@ -66,12 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					salidas:{[indice]:serverTimestamp()}
 				}
 				await setDoc(docRef, dataToSend, {merge:true});
-				alert("Se ha creado el registro de salida.");
 				accionCancelar();
+				alert("Se ha creado el registro de salida.");
 			} else {
 				await setDoc(docRef, dataToSend, {merge:true});
-				alert("Se ha creado el registro de salida.");
 				accionCancelar();
+				alert("Se ha creado el registro de salida.");
 			}
 		} catch (error) {
 			console.log(`Error: ${error}`);
@@ -95,12 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					ingresos:{[indice]:serverTimestamp()}
 				}
 				await setDoc(docRef, dataToSend, {merge:true});
-				alert('Se ha creado el registro de entrada.');
 				accionCancelar();
+				alert('Se ha creado el registro de entrada.');
 			} else {
 				await setDoc(docRef, dataToSend, {merge:true});
-				alert("Se ha creado el registro de entrada.");
 				accionCancelar();
+				alert("Se ha creado el registro de entrada.");
 			}
 		} catch (error) {
 			console.log(`Error: ${error}`);

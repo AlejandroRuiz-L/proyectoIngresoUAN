@@ -1,6 +1,6 @@
-import { getAuth, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { getAuth, signOut, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 // Configura Firebase
 const firebaseConfig = {
@@ -22,6 +22,19 @@ const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
+const formatDate = (date) => {
+				if (!date) return 'N/A';
+				const options = {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					second: '2-digit',
+					hour12: false // Formato 24 horas
+				};
+				return date.toDate().toLocaleString('es-CO', options).replace(',', '');
+			};
 
 function mostrarMenu() {
 	adminForm.style.display = 'none';
@@ -55,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			} else if (error.code === "auth/invalid-email"){
 				console.log(`Error: ${error}`);
 				alert("El correo no es válido.");
+			} else if (error.code === "auth/network-request-failed"){
+				alert("No tienes conexión a internet.");
 			} else {
     			console.log(`Error: ${error}`);
 	    		alert("Error al iniciar sesión.");
@@ -79,16 +94,16 @@ document.getElementById('buscar').addEventListener('click', async () => {
 	info.innerHTML = '';
 	dataDownload = [];
 	const docId = document.querySelector('#docId').value.trim();
-	if (!docId){
+	if (!docId) {
 		alert("Debes ingresar un número de documento.");
 		return;
 	}
 	try {
 		const docRef = doc(db, 'ingresos', docId);
 		const docSnap = await getDoc(docRef);
-		if (docSnap.exists()){
-			const encabezado = ["Identificacion", "Documento", "Nombre", "correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
-		    dataDownload.push(encabezado);
+		if (docSnap.exists()) {
+			const encabezado = ["Identificacion", "Documento", "Nombre", "Correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
+			dataDownload.push(encabezado);
 			const data = docSnap.data();
 			const ingresos = data.ingresos || {};
 			const salidas = data.salidas || {};
@@ -104,19 +119,19 @@ document.getElementById('buscar').addEventListener('click', async () => {
 					`${data.correo ? data.correo : 'N/A'}`,
 					`${data.telefono ? data.telefono : 'N/A'}`, 
 					`${data.visitante}`,
-					`${ingresos[key] ? ingresos[key].toDate() : 'N/A'}`,
-					`${salidas[key] ? salidas[key].toDate() : 'N/A'}`
+					`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
+					`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
 				];
 				texto.textContent = `${data.documento}: ${data.identificacion}\nNombre: ${data.nombre}`;
 				dataDownload.push(registro);
 				counter += 1;
 			});
 			const msg = document.createElement('p');
-		    msg.textContent = `${counter} registros están listos para descargar.`;
+			msg.textContent = `${counter} registros están listos para descargar.`;
 			info.appendChild(texto);
-		    info.appendChild(msg);
-		    info.style.display = 'flex';
-		    downloadBTN.style.display = 'block';
+			info.appendChild(msg);
+			info.style.display = 'flex';
+			downloadBTN.style.display = 'block';
 		} else {
 			alert("No se encontró el documento.");
 		}
@@ -133,7 +148,6 @@ document.getElementById('registros').addEventListener('click', async () => {
 		const docsRef = collection(db, 'ingresos');
 		const docSnap = await getDocs(docsRef);
 		let counter = 0;
-		//console.log(`Se encontraron ${Object.keys(docSnap).length} personas.`);
 		const encabezado = ["Identificacion", "Documento", "Nombre", "correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
 		dataDownload.push(encabezado);
 		docSnap.forEach(doc => {
@@ -149,8 +163,8 @@ document.getElementById('registros').addEventListener('click', async () => {
 					`${data.correo ? data.correo : 'N/A'}`,
 					`${data.telefono ? data.telefono : 'N/A'}`, 
 					`${data.visitante}`,
-					`${ingresos[key] ? ingresos[key].toDate() : 'N/A'}`,
-					`${salidas[key] ? salidas[key].toDate() : 'N/A'}`
+					`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
+					`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
 				];
 				
 				dataDownload.push(registro);

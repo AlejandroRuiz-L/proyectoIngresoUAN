@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 			} catch (error) {
 				console.error('Error al enviar datos:', error);
-				alert('Error al registrar el ingreso');
+				alert('Error al registrar los datos de ingreso');
 			}
 	});
 });
