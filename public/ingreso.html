@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Ingreso UAN</title>
+  <script type="module" src="main.js" defer ></script>
+  <link rel="stylesheet" href="main.css" >
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <main>
+    <form id="formIngreso" class="form container">
+	  <h1>Formulario de ingreso</h1>
+	  <div>
+	    <label for="nombre">Nombre:</label>
+	    <input type="text" id="nombre" class="input" required >
+	  </div>
+	  
+	  <div>
+	    <label for="tipoId">Tipo de documento:</label>
+		<select id="tipoId" class="input">
+		  <option value="C.C">C.C</option>
+		  <option value="C.E">C.E</option>
+		  <option value="T.I">T.I</option>
+		  <option value="PA">PA</option>
+		  <option value="PEP">PEP</option>
+		</select>
+	  </div>
+	  
+	  <div>
+	    <label for="identificacion">Identificación:</label>
+		<input type="text" id="identificacion" class="input" required >
+	  </div>
+	  
+	  <div>
+	    <label for="correo">Correo:</label>
+		<input type="email" id="correo" class="input" >
+	  </div>
+	  
+	  <div>
+	    <label for="telefono">Teléfono</label>
+		<input type="text" id="telefono" class="input" >
+	  </div>
+      
+	  <div>
+	    <label for="visitante">Tipo de visitante</label>
+		<select id="visitante" class="input">
+		  <option value="Colaborador">Colaborador</option>
+		  <option value="Otro">Otro</option>
+		</select>
+	  </div>
+	  
+	  <button type="submit" class="boton">Registrar</button>
+	  <button type="reset" class="boton">Limpiar</button>
+	</form>
+	
+	<button class="boton btn-flecha"><a href="index.html" class="link"><i class="fas fa-house-user"></i></a></button>
+	
+  </main>
+</body>
+</html>

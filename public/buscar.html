@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Ingreso UAN</title>
+  <link rel="stylesheet" href="main.css" >
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script type="module" src="buscar.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <form id="buscar-form" class="container form">
+      <p>Ingresa tu número de documento para registrar tu hora de entrada o de salida.</p>
+	  <label for="docId">Documento:</label>
+	  <input type="text" id="docId" class="input" required >
+	  <button class="boton" type="submit" id="buscar">Buscar</button>
+	</form>
+	
+    <div id="protected-content" class="protected-content form"></div>
+	
+	<div id="botones" class="protected-content container">
+	  <button id="cancelar" class="boton">Cancelar</button>
+	  <button id="entrada" class="boton">Registrar Ingreso</button>
+	  <button id="salida" class="boton">Registrar Salida</button>
+	</div>
+  </main>
+  <button class="boton btn-flecha"><a href="index.html" class="link"><i class="fas fa-house-user"></i></a></button>
+</body>
+</html>
