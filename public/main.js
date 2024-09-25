@@ -9,19 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
 			// Recoge todos los checkboxes seleccionados
 			const name = document.querySelector('#nombre').value.trim();
 			const typeId = document.querySelector('#tipoId').value;
-			const numIdText = document.querySelector('#identificacion').value.trim();
-			const numId = parseInt(numIdText);
+			const numId = document.querySelector('#identificacion').value.trim();
 			const email = document.querySelector('#correo').value.trim();
 			const tel  = document.querySelector('#telefono').value.trim();
 			const typeVisitor = document.querySelector('#visitante').value;
 			
-			if (!numId){
+			if(!name || !numId){
+				alert('El nombre y la identificación son obligatorios');
+				return;
+			}
+			
+			if (!/^\d+$/.test(numId)){
 				alert('El número de identificación no es válido');
 				return;
 			}
 			
-			if(!name || !numIdText){
-				alert('El nombre y la identificación son obligatorios');
+			if (tel && !/^\d+$/.test(tel)){
+				alert("El teléfono no es válido.");
+				return;
+			}
+			
+			if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+				alert("El correo no es válido.");
 				return;
 			}
 

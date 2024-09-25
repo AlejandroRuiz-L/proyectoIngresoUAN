@@ -1,0 +1,61 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Ingreso UAN</title>
+  <link rel="stylesheet" href="main.css" >
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Edición de Registro</h1>
+    <form class="container form">
+	  <div>
+	    <label for="id" id="idLabel">Identificación: </label>
+	    <input type="text" id="id" placeholder="Nueva identificación" class="input">
+	  </div>
+	  
+	  <div>
+		  <label for="doc" id="docLabel">Documento: </label>
+		  <select id="doc" class="input">
+			<option value="C.C">C.C</option>
+			<option value="C.E">C.E</option>
+			<option value="T.I">T.I</option>
+			<option value="PA">PA</option>
+			<option value="PEP">PEP</option>
+			<option value="" selected>Sin modificar</option>
+		  </select>
+	  </div>
+	  
+	  <div>
+	    <label for="name" id="nameLabel">Nombre: </label>
+	    <input type="text" id="name" class="input" placeholder="Nuevo nombre">
+	  </div>
+	  
+	  <div>
+	    <label for="email" id="emailLabel">Correo: </label>
+	    <input type="email" id="email" class="input" placeholder="Nuevo correo">
+	  </div>
+	  
+	  <div>
+	    <label for="tel" id="telLabel">Teléfono: </label>
+	    <input type="text" id="tel" class="input" placeholder="Nuevo teléfono">
+	  </div>
+	  
+	  <div>
+	    <label for="visit" id="visitLabel">Visitante: </label>
+		  <select id="visit" class="input">
+			<option value="Colaborador">Colaborador</option>
+			<option value="Otro">Otro</option>
+			<option value="" selected>Sin modificar</option>
+		  </select>
+	  </div>
+	  
+	  <button class="boton" id="guardar">Guardar</button>
+	  <button class="boton" type="reset">Limpiar</button>
+	  <button class="boton" id="cancelar">Cancelar</button>
+	</form>
+  </main>
+  <script type="module" src="editar.js" defer></script>
+</body>
+</html>

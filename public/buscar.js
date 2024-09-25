@@ -22,12 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				const data = docSnap.data();
 				let mensaje = document.createElement('p');
 				mensaje.style.whiteSpace = "pre-wrap";
-				mensaje.textContent = "Si tus datos son incorrectos presiona 'Cancelar'\npara ingresar de nuevo tu documento.";
+				mensaje.style.marginTop = '30px';
+				mensaje.textContent = "Si tus datos son incorrectos presiona 'Cancelar'\nde lo contrario registra tu ingreso o tu salida.";
 				let texto = document.createElement('p');
 				texto.textContent += `Documento: ${data.identificacion}\nNombre: ${data.nombre}`;
 				texto.classList.add('lista-item');
-				divInfo.appendChild(mensaje);
 				divInfo.appendChild(texto);
+				divInfo.appendChild(mensaje);
 				buscarForm.style.display = 'none';
 				divInfo.style.display = 'block';
 				botones.style.display = 'flex';

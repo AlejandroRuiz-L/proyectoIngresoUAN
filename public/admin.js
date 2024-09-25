@@ -109,29 +109,49 @@ document.getElementById('buscar').addEventListener('click', async () => {
 			const salidas = data.salidas || {};
 			let counter = 0;
 			const texto = document.createElement('p');
+			const editBtn = document.createElement('button');
+			editBtn.classList.add('boton');
+			editBtn.id = 'editar';
+			editBtn.textContent = 'Editar';
 			texto.style.whiteSpace = 'pre-wrap';
+			const _id = data.identificacion;
+			const _docu = data.documento;
+			const _name = data.nombre;
+			const _email = data.correo ? data.correo : 'N/A';
+			const _tel = data.telefono ? data.telefono : 'N/A';
+			const _visit = data.visitante;
 
 			Object.keys(ingresos).forEach(key => {
 				let registro = [
-					`${data.identificacion}`, 
-					`${data.documento}`, 
-					`${data.nombre}`, 
-					`${data.correo ? data.correo : 'N/A'}`,
-					`${data.telefono ? data.telefono : 'N/A'}`, 
-					`${data.visitante}`,
+					`${_id}`, 
+					`${_docu}`, 
+					`${_name}`, 
+					`${_email}`,
+					`${_tel}`, 
+					`${_visit}`,
 					`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
 					`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
 				];
-				texto.textContent = `${data.documento}: ${data.identificacion}\nNombre: ${data.nombre}`;
+				texto.textContent = `${_docu}: ${_id}\nNombre: ${_name}`;
 				dataDownload.push(registro);
 				counter += 1;
 			});
 			const msg = document.createElement('p');
 			msg.textContent = `${counter} registros están listos para descargar.`;
 			info.appendChild(texto);
+			info.appendChild(editBtn);
 			info.appendChild(msg);
 			info.style.display = 'flex';
 			downloadBTN.style.display = 'block';
+			document.querySelector('#editar').addEventListener('click', function(){
+				localStorage.setItem('p1', _id);
+			    localStorage.setItem('p2', _docu);
+			    localStorage.setItem('p3', _name);
+				localStorage.setItem('p4', _email);
+				localStorage.setItem('p5', _tel);
+				localStorage.setItem('p6', _visit);
+				window.open(`editar.html`, '_blank');
+			});
 		} else {
 			alert("No se encontró el documento.");
 		}
