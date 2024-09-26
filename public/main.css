@@ -27,12 +27,17 @@ body{
 }
 
 .fondo{
-    background-image: url('fondoMinion.jpg');
+    background-image: url('minion1.png');
     background-size: cover; /* Para cubrir todo el contenedor */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-position: center; /* Centra la imagen */
-	height: 480px;
-	width: 640px;
+    background-position: bottom; /* Centra la imagen */
+}
+
+.contenedorFondo{
+	width: 96%;
+	height: 50vh;
+	margin-left: 20px;
+	display: none;
 }
 
 
@@ -218,4 +223,10 @@ body{
 	.lista{
 		grid-template-columns: 1fr;
 	}
+}
+
+@media (max-width: 500px){
+	.contenedorFondo{
+			display: block;
+		}
 }
