@@ -1,5 +1,19 @@
 import { doc, getDoc, db, serverTimestamp, setDoc} from './configDB.js';
 
+const formatDate = (date) => {
+				if (!date) return 'N/A';
+				const options = {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					second: '2-digit',
+					hour12: false // Formato 24 horas
+				};
+				return `${date.toDate().toLocaleString('es-CO', options).replace(',', '')}`;
+    };
+
 document.addEventListener('DOMContentLoaded', () => {
 	const buscarForm = document.querySelector('#buscar-form');
     const divInfo = document.querySelector('#protected-content');
@@ -58,22 +72,41 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docSnap = await getDoc(docRef);
 			const data = docSnap.data();
 			let indice = 'ingreso1';
+			if (data.salidas){
+				indice = `ingreso${Object.keys(data.ingresos).length}`;
+			}
 			let dataToSend = {
 			    salidas:{[indice]:serverTimestamp()}
 			};
-			if (data.salidas){
-				indice = `ingreso${Object.keys(data.ingresos).length}`;
-				let dataToSend = {
-					salidas:{[indice]:serverTimestamp()}
-				}
-				await setDoc(docRef, dataToSend, {merge:true});
-				accionCancelar();
-				alert("Se ha creado el registro de salida.");
-			} else {
-				await setDoc(docRef, dataToSend, {merge:true});
-				accionCancelar();
-				alert("Se ha creado el registro de salida.");
-			}
+			await setDoc(docRef, dataToSend, {merge:true});
+			//maneja la obtención de un serverTimestamp
+			const dateDocRef = doc(db, 'hora', 'actual');
+			await setDoc(dateDocRef, {horaActual: serverTimestamp()});
+			const time = await getDoc(dateDocRef);
+			const dataTime = time.data().horaActual;
+			const fecha = formatDate(dataTime);
+			//maneja la obtencion de la fecha
+			const arrayDate = fecha.split(' ')[0];
+			const fechaSplit = arrayDate.split('/');
+			const year = fechaSplit[2];
+			const month = fechaSplit[1];
+			const day = fechaSplit[0];
+			//crea el registro diario en base al serverTimestamp
+			const newDataUser = {
+				documento: data.documento,
+				nombre: data.nombre,
+				correo: data.correo,
+				identificacion: data.identificacion,
+				telefono: data.telefono,
+				visitante: data.visitante,
+				salidas: {[indice]: serverTimestamp()}
+			};
+		    const newTimeDocRef = doc(db, 'dias', `a${year}`);
+			const newDataToSend = {[`m${month}`]: {[`d${day}`]: {[String(docId)]: newDataUser}}};
+			await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+			accionCancelar();
+			alert("Se ha creado el registro de salida.");
+			
 		} catch (error) {
 			console.log(`Error: ${error}`);
 			alert("Error al registrar hora de salida.");
@@ -87,22 +120,40 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docSnap = await getDoc(docRef);
 			const data = docSnap.data();
 			let indice = 'ingreso1';
-			let dataToSend = {
-				ingresos:{[indice]:serverTimestamp()}
-			};
 			if (data.ingresos){
 				indice = `ingreso${Object.keys(data.ingresos).length + 1}`;
-				let dataToSend = {
-					ingresos:{[indice]:serverTimestamp()}
-				}
-				await setDoc(docRef, dataToSend, {merge:true});
-				accionCancelar();
-				alert('Se ha creado el registro de entrada.');
-			} else {
-				await setDoc(docRef, dataToSend, {merge:true});
-				accionCancelar();
-				alert("Se ha creado el registro de entrada.");
-			}
+			};
+			let dataToSend = {
+				ingresos:{[indice]: serverTimestamp()}
+			};
+			await setDoc(docRef, dataToSend, {merge:true});
+			//maneja la obtención de un serverTimestamp
+			const dateDocRef = doc(db, 'hora', 'actual');
+			await setDoc(dateDocRef, {horaActual: serverTimestamp()});
+			const time = await getDoc(dateDocRef);
+			const dataTime = time.data().horaActual;
+			const fecha = formatDate(dataTime);
+			//maneja la obtencion de la fecha
+			const arrayDate = fecha.split(' ')[0];
+			const fechaSplit = arrayDate.split('/');
+			const year = fechaSplit[2];
+			const month = fechaSplit[1];
+			const day = fechaSplit[0];
+			//crea el registro diario en base al serverTimestamp
+			const newDataUser = {
+				documento: data.documento,
+				nombre: data.nombre,
+				correo: data.correo,
+				identificacion: data.identificacion,
+				telefono: data.telefono,
+				visitante: data.visitante,
+				ingresos: {[indice]: serverTimestamp()}
+			};
+			const newTimeDocRef = doc(db, 'dias', String(year));
+			const newDataToSend = {[String(month)]: {[String(day)]: {[String(docId)]: newDataUser}}};
+			await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+			accionCancelar();
+			alert("Se ha creado el registro de entrada.");
 		} catch (error) {
 			console.log(`Error: ${error}`);
 			alert("Error al crear el registro.");

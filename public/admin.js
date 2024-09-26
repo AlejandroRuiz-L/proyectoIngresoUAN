@@ -20,6 +20,9 @@ const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
 const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
+const diario = document.querySelector('#diario');
+const semanal = document.querySelector('#semanal');
+const encabezado = ["Identificacion", "Documento", "Nombre", "Correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
 const formatDate = (date) => {
@@ -34,7 +37,7 @@ const formatDate = (date) => {
 					hour12: false // Formato 24 horas
 				};
 				return date.toDate().toLocaleString('es-CO', options).replace(',', '');
-			};
+    };
 
 function mostrarMenu() {
 	adminForm.style.display = 'none';
@@ -102,7 +105,6 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		const docRef = doc(db, 'ingresos', docId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
-			const encabezado = ["Identificacion", "Documento", "Nombre", "Correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
 			dataDownload.push(encabezado);
 			const data = docSnap.data();
 			const ingresos = data.ingresos || {};
@@ -161,6 +163,51 @@ document.getElementById('buscar').addEventListener('click', async () => {
 	}
 });
 
+diario.addEventListener('click', async () => {
+	info.innerHTML = '';
+	dataDownload = [];
+	const fecha = document.querySelector('#fecha').value;
+	if (!fecha){
+		alert("Debes ingresar una fecha.");
+		return;
+	};
+	const fechaSplit = fecha.split('-');
+	const year = fechaSplit[0];
+	const month = fechaSplit[1];
+	const day = fechaSplit[2];
+	console.log(year, month, day);
+	try {
+		const docRef = collection(db, 'dias', String(year), String(month));
+		/*const yearRef = doc(db, 'dias', String(year));
+		const monthRef = doc(yearRef, String(month));
+		const dayRef = collection(monthRef, String(day));*/
+		const docSnap = await getDocs(docRef);
+		//const data = docSnap.data();
+		console.log(docSnap);
+		/*if (docSnap.exists()){
+			const data = docSnap.data();
+			const users = Object.keys(data).length;
+			dataDownload.push(encabezado);
+			Object.keys(data).forEach(key => {
+				let ingresos = key.ingresos || {};
+				let salidas = key.salidas || {};
+				let registro = [
+				    `${key.identificacion}`,
+					`${key.documento}`,
+					`${key.nombre}`
+				];
+				console.log(registro);
+			});
+		} else {
+			alert("No hay registros para la fecha especificada.");
+			return;
+		}*/
+	} catch (error){
+		console.log(`Error: ${error}`);
+		alert("Ocurrió un error al consultar los registros.");
+	}
+});
+
 document.getElementById('registros').addEventListener('click', async () => {
 	try {
 		info.innerHTML = '';
@@ -168,7 +215,6 @@ document.getElementById('registros').addEventListener('click', async () => {
 		const docsRef = collection(db, 'ingresos');
 		const docSnap = await getDocs(docsRef);
 		let counter = 0;
-		const encabezado = ["Identificacion", "Documento", "Nombre", "correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
 		dataDownload.push(encabezado);
 		docSnap.forEach(doc => {
 			const data = doc.data();

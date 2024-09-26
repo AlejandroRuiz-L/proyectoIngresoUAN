@@ -1,5 +1,19 @@
 import {db, doc, getDoc, serverTimestamp, setDoc} from './configDB.js';
 
+const formatDate = (date) => {
+				if (!date) return 'N/A';
+				const options = {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					second: '2-digit',
+					hour12: false // Formato 24 horas
+				};
+				return `${date.toDate().toLocaleString('es-CO', options).replace(',', '')}`;
+    };
+
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formIngreso');
 
@@ -51,9 +65,26 @@ document.addEventListener('DOMContentLoaded', () => {
 				
 				if (docRefSnap.exists()){
 					alert('El número de documento ya se encuentra registrado.');
-				}else{
+				} else {
+					//crea el registro en ingresos
 					await setDoc(docRef, dataToSend, {merge: true});
-				    alert('Ingreso registrado exitosamente');
+					//maneja la obtención de un serverTimestamp
+					const dateDocRef = doc(db, 'hora', 'actual');
+				    await setDoc(dateDocRef, {horaActual: serverTimestamp()});
+					const time = await getDoc(dateDocRef);
+					const dataTime = time.data().horaActual;
+					const fecha = formatDate(dataTime);
+					//maneja la obtencion de la fecha
+					const arrayDate = fecha.split(' ')[0];
+					const fechaSplit = arrayDate.split('/');
+					const year = fechaSplit[2];
+					const month = fechaSplit[1];
+					const day = fechaSplit[0];
+					//crea el registro diario en base al serverTimestamp
+					const newTimeDocRef = doc(db, 'dias', String(year));
+					const newDataToSend = {[String(month)]: {[String(day)]: {[String(numId)]: dataToSend}}};
+					await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+					alert('Registro de ingreso creado exitosamente.');
 				}
 			} catch (error) {
 				console.error('Error al enviar datos:', error);
