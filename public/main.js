@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					const month = fechaSplit[1];
 					const day = fechaSplit[0];
 					//crea el registro diario en base al serverTimestamp
-					const monthDocRef = doc(db, String(year), String(month));
+					const monthDocRef = doc(db, 'a'+String(year), String(month));
 					const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(numId));
 					await setDoc(newTimeDocRef, dataToSend, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');

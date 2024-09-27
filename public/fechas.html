@@ -11,50 +11,14 @@
 
     <label for="fechaInicio">Selecciona una fecha de inicio:</label>
     <input type="date" id="fechaInicio">
-    
-    <h2>Días de la semana</h2>
-    <form id="semanaForm">
-        <div id="checkboxes"></div>
-        <button type="submit">Enviar</button>
-    </form>
+    <button id="sendDate">Test</button>
 
     <script>
-        const fechaInicioInput = document.getElementById('fechaInicio');
-        const checkboxesContainer = document.getElementById('checkboxes');
-
-        // Función para generar checkboxes según la fecha de inicio
-        fechaInicioInput.addEventListener('change', () => {
-            const fechaInicio = new Date(fechaInicioInput.value);
-            checkboxesContainer.innerHTML = ''; // Limpiar checkboxes anteriores
-
-            // Generar los días de la semana a partir de la fecha seleccionada
-            for (let i = 0; i < 7; i++) {
-                const dia = new Date(fechaInicio);
-                dia.setDate(fechaInicio.getDate() + i);
-                const diaNombre = dia.toLocaleDateString('es-ES', { weekday: 'long' });
-                const fechaFormato = dia.toISOString().split('T')[0]; // Obtener fecha en formato YYYY-MM-DD
-
-                // Crear checkbox para el día
-                const checkbox = document.createElement('label');
-                checkbox.innerHTML = `
-                    <input type="checkbox" value="${fechaFormato}" id="dia${i}"> ${diaNombre} (${fechaFormato})
-                `;
-                checkboxesContainer.appendChild(checkbox);
-                checkboxesContainer.appendChild(document.createElement('br'));
-            }
-        });
-
-        // Manejar el envío del formulario
-        document.getElementById('semanaForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Evita el envío predeterminado del formulario
-            
-            const selectedDates = Array.from(this.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(checkbox => checkbox.value);
-            
-            console.log('Fechas seleccionadas:', selectedDates);
-            // Aquí puedes manejar las fechas seleccionadas como necesites
-        });
+	  let day = 6;
+	  if (String(day).length < 2){
+	    day = '0' + String(day);
+	  }
+	  console.log(day, typeof day);
     </script>
-
 </body>
 </html>

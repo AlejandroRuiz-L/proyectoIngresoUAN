@@ -38,6 +38,14 @@ const formatDate = (date) => {
 				};
 				return date.toDate().toLocaleString('es-CO', options).replace(',', '');
     };
+function esFechaValida(year, month, day) {
+				const fechaObjeto = new Date(year, month - 1, day);
+				return (
+					fechaObjeto.getFullYear() === year &&
+					fechaObjeto.getMonth() === month - 1 &&
+					fechaObjeto.getDate() === day
+				);
+			}
 
 function mostrarMenu() {
 	adminForm.style.display = 'none';
@@ -85,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('logout').addEventListener('click', async () => {
     try {
         await signOut(auth);
+		localStorage.clear();
 		ocultarMenu();
 		logout.style.display = 'none';
 		console.log('El usuario ha cerrado sesión');
@@ -93,6 +102,7 @@ document.getElementById('logout').addEventListener('click', async () => {
     }
 });
 
+//manejo de evento clik de los botones
 document.getElementById('buscar').addEventListener('click', async () => {
 	info.innerHTML = '';
 	dataDownload = [];
@@ -177,7 +187,7 @@ diario.addEventListener('click', async () => {
 	const month = fechaSplit[1];
 	const day = fechaSplit[2];
 	try {
-		const monthDocRef = doc(db, String(year), String(month));
+		const monthDocRef = doc(db, 'a'+String(year), String(month));
 		const docRef = collection(monthDocRef, String(day));
 		const docSnap = await getDocs(docRef);
 		if (!docSnap.empty){
@@ -212,6 +222,80 @@ diario.addEventListener('click', async () => {
 			alert("No hay registros para la fecha especificada.");
 			return;
 		}
+	} catch (error){
+		console.log(`Error: ${error}`);
+		alert("Ocurrió un error al consultar los registros.");
+	}
+});
+
+semanal.addEventListener('click', async () => {
+	info.innerHTML = '';
+	dataDownload = [];
+	const fechaValue = document.querySelector('#fecha').value;
+	if (!fechaValue){
+		alert("Debes seleccionar una fecha.");
+		return;
+	};
+	const fechaSplit = fechaValue.split(/[\/\-\\]+/);
+	let year = fechaSplit[0];
+	let month = fechaSplit[1];
+	let day = fechaSplit[2];
+	let limitDate;
+	try {
+		let counterPeople = 0;
+		let counterRegister = 0;
+		for(let i = 1; i <= 7; i++){
+			if (!esFechaValida(Number(year), Number(month), Number(day))){
+				if (Number(month) + 1 >= 13){
+					year = Number(year) + 1;
+					month = 1;
+					day = 1;
+				} else {
+					month = Number(month) + 1;
+					day = 1;
+				}
+				i--;
+				continue;
+			};
+			const monthDocRef = doc(db, 'a'+String(year), String(month));
+		    const docRef = collection(monthDocRef, String(day).length < 2 ? '0' + String(day) : String(day));
+		    const docSnap = await getDocs(docRef);
+			counterPeople += docSnap.size;
+			if (!docSnap.empty){
+				docSnap.forEach(d => {
+					const data = d.data();
+					const ingresos = data.ingresos || {};
+					const salidas = data.salidas || {};
+					Object.keys(ingresos).forEach(key => {
+						let registro = [
+							`${data.identificacion}`, 
+							`${data.documento}`, 
+							`${data.nombre}`, 
+							`${data.correo ? data.correo : 'N/A'}`,
+							`${data.telefono ? data.telefono : 'N/A'}`, 
+							`${data.visitante}`,
+							`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
+							`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
+						];
+						counterRegister += 1;
+						dataDownload.push(registro);
+					});
+				});
+			} else {
+				dataDownload.push([`No hay registros para la fecha ${day}/${month}/${year}`]);
+			}
+			if (i == 7){
+				limitDate = `${year}-${month}-${day}`;
+			}
+			day = Number(day) + 1;
+		};
+		dataDownload.unshift([`Reporte_semanal_${fechaValue}_${limitDate}`], [`${counterPeople} personas ingresaron ${counterRegister} veces a la universidad`], encabezado);
+		const msg = document.createElement('p');
+		msg.style.whiteSpace = 'pre-wrap';
+		msg.textContent = `Se encontraron ${counterPeople} usuarios.\n${counterRegister} registros están listos para descargar.`;
+		info.appendChild(msg);
+		info.style.display = 'flex';
+		downloadBTN.style.display = 'block';
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Ocurrió un error al consultar los registros.");

@@ -1,4 +1,4 @@
-import { getAuth, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { getAuth, signOut, signInWithEmailAndPassword} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { getFirestore, doc, getDoc, getDocs, setDoc, collection, deleteDoc, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
@@ -17,4 +17,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export{db, auth, doc, getDoc, getDocs, setDoc, deleteDoc, collection, serverTimestamp, Timestamp, getAuth, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword};
+export{db, auth, doc, getDoc, getDocs, setDoc, deleteDoc, collection, serverTimestamp, Timestamp, getAuth, signOut, signInWithEmailAndPassword};

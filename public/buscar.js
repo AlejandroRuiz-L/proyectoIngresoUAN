@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				visitante: data.visitante,
 				salidas: {[indice]: serverTimestamp()}
 			};
-		    const monthDocRef = doc(db, String(year), String(month));
+		    const monthDocRef = doc(db, 'a'+String(year), String(month));
 			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
 			await setDoc(newTimeDocRef, newDataUser, {merge:true});
 			accionCancelar();
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				visitante: data.visitante,
 				ingresos: {[indice]: serverTimestamp()}
 			};
-			const monthDocRef = doc(db, String(year), String(month));
+			const monthDocRef = doc(db, 'a'+String(year), String(month));
 			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
 			await setDoc(newTimeDocRef, newDataUser, {merge:true});
 			accionCancelar();
