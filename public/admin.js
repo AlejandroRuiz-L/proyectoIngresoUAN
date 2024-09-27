@@ -22,7 +22,7 @@ const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
 const diario = document.querySelector('#diario');
 const semanal = document.querySelector('#semanal');
-const encabezado = ["Identificacion", "Documento", "Nombre", "Correo", "Teléfono", "Visitante", "Ingreso", "Salida"];
+const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "CORREO", "TELEFONO", "TIPO DE VISITANTE", "INGRESO", "SALIDA"];
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
 const formatDate = (date) => {
@@ -105,8 +105,9 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		const docRef = doc(db, 'ingresos', docId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
-			dataDownload.push(encabezado);
 			const data = docSnap.data();
+			dataDownload.push([`Usuario_${data.nombre}`]);
+			dataDownload.push(encabezado);
 			const ingresos = data.ingresos || {};
 			const salidas = data.salidas || {};
 			let counter = 0;
@@ -171,37 +172,46 @@ diario.addEventListener('click', async () => {
 		alert("Debes ingresar una fecha.");
 		return;
 	};
-	const fechaSplit = fecha.split('-');
+	const fechaSplit = fecha.split(/[\/\-\\]+/);
 	const year = fechaSplit[0];
 	const month = fechaSplit[1];
 	const day = fechaSplit[2];
-	console.log(year, month, day);
 	try {
-		const docRef = collection(db, 'dias', String(year), String(month));
-		/*const yearRef = doc(db, 'dias', String(year));
-		const monthRef = doc(yearRef, String(month));
-		const dayRef = collection(monthRef, String(day));*/
+		const monthDocRef = doc(db, String(year), String(month));
+		const docRef = collection(monthDocRef, String(day));
 		const docSnap = await getDocs(docRef);
-		//const data = docSnap.data();
-		console.log(docSnap);
-		/*if (docSnap.exists()){
-			const data = docSnap.data();
-			const users = Object.keys(data).length;
-			dataDownload.push(encabezado);
-			Object.keys(data).forEach(key => {
-				let ingresos = key.ingresos || {};
-				let salidas = key.salidas || {};
-				let registro = [
-				    `${key.identificacion}`,
-					`${key.documento}`,
-					`${key.nombre}`
-				];
-				console.log(registro);
+		if (!docSnap.empty){
+			let counter = 0;
+			docSnap.forEach(d => {
+				const data = d.data();
+				const ingresos = data.ingresos || {};
+			    const salidas = data.salidas || {};
+				Object.keys(ingresos).forEach(key => {
+					let registro = [
+						`${data.identificacion}`, 
+						`${data.documento}`, 
+						`${data.nombre}`, 
+						`${data.correo ? data.correo : 'N/A'}`,
+						`${data.telefono ? data.telefono : 'N/A'}`, 
+						`${data.visitante}`,
+						`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
+						`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
+				    ];
+					counter += 1;
+					dataDownload.push(registro);
+				});
 			});
+			dataDownload.unshift([`Reporte_diario_${fecha}`], [`${docSnap.size} personas ingresaron ${counter} veces a la universidad`], encabezado);
+			const msg = document.createElement('p');
+			msg.style.whiteSpace = 'pre-wrap';
+			msg.textContent = `Se encontraron ${docSnap.size} usuarios.\n${counter} registros están listos para descargar.`;
+			info.appendChild(msg);
+			info.style.display = 'flex';
+			downloadBTN.style.display = 'block';
 		} else {
 			alert("No hay registros para la fecha especificada.");
 			return;
-		}*/
+		}
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Ocurrió un error al consultar los registros.");
@@ -215,6 +225,7 @@ document.getElementById('registros').addEventListener('click', async () => {
 		const docsRef = collection(db, 'ingresos');
 		const docSnap = await getDocs(docsRef);
 		let counter = 0;
+		dataDownload.push(["Total_Usuarios"]);
 		dataDownload.push(encabezado);
 		docSnap.forEach(doc => {
 			const data = doc.data();
@@ -232,7 +243,6 @@ document.getElementById('registros').addEventListener('click', async () => {
 					`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
 					`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
 				];
-				
 				dataDownload.push(registro);
 				counter += 1;
 			});
@@ -262,5 +272,5 @@ downloadBTN.addEventListener('click', function(){
 	const ws = XLSX.utils.aoa_to_sheet(ws_data);
 	const wb = XLSX.utils.book_new();//libro de trabajo
 	XLSX.utils.book_append_sheet(wb, ws, "Ingresos UAN Sede Bucaramanga");
-	XLSX.writeFile(wb, "Ingresos_UAN_Sede_Bucaramanga.xlsx");
+	XLSX.writeFile(wb, `Ingresos_UAN_Sede_Bucaramanga_${dataDownload[0]}.xlsx`);
 });

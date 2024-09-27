@@ -1,4 +1,4 @@
-import { doc, getDoc, db, serverTimestamp, setDoc} from './configDB.js';
+import { doc, getDoc, db, serverTimestamp, setDoc, collection} from './configDB.js';
 
 const formatDate = (date) => {
 				if (!date) return 'N/A';
@@ -101,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				visitante: data.visitante,
 				salidas: {[indice]: serverTimestamp()}
 			};
-		    const newTimeDocRef = doc(db, 'dias', `a${year}`);
-			const newDataToSend = {[`m${month}`]: {[`d${day}`]: {[String(docId)]: newDataUser}}};
-			await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+		    const monthDocRef = doc(db, String(year), String(month));
+			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
+			await setDoc(newTimeDocRef, newDataUser, {merge:true});
 			accionCancelar();
 			alert("Se ha creado el registro de salida.");
 			
@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				visitante: data.visitante,
 				ingresos: {[indice]: serverTimestamp()}
 			};
-			const newTimeDocRef = doc(db, 'dias', String(year));
-			const newDataToSend = {[String(month)]: {[String(day)]: {[String(docId)]: newDataUser}}};
-			await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+			const monthDocRef = doc(db, String(year), String(month));
+			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
+			await setDoc(newTimeDocRef, newDataUser, {merge:true});
 			accionCancelar();
 			alert("Se ha creado el registro de entrada.");
 		} catch (error) {

@@ -1,4 +1,4 @@
-import {db, doc, getDoc, serverTimestamp, setDoc} from './configDB.js';
+import {db, doc, getDoc, serverTimestamp, setDoc, collection} from './configDB.js';
 
 const formatDate = (date) => {
 				if (!date) return 'N/A';
@@ -61,8 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				    telefono: tel,
 				    visitante: typeVisitor,
 				    ingresos: {[fieldNumberToText]: serverTimestamp()}
-				}
-				
+				};
 				if (docRefSnap.exists()){
 					alert('El número de documento ya se encuentra registrado.');
 				} else {
@@ -81,9 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 					const month = fechaSplit[1];
 					const day = fechaSplit[0];
 					//crea el registro diario en base al serverTimestamp
-					const newTimeDocRef = doc(db, 'dias', String(year));
-					const newDataToSend = {[String(month)]: {[String(day)]: {[String(numId)]: dataToSend}}};
-					await setDoc(newTimeDocRef, newDataToSend, {merge:true});
+					const monthDocRef = doc(db, String(year), String(month));
+					const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(numId));
+					await setDoc(newTimeDocRef, dataToSend, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
 				}
 			} catch (error) {
