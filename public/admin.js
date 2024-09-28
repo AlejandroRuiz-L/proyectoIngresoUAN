@@ -345,97 +345,80 @@ document.getElementById('registros').addEventListener('click', async () => {
 });
 
 document.querySelector('#copia').addEventListener('click', async () => {
+	const fechaValue = document.querySelector('#fecha').value;
+	info.innerHTML = '';
+	if (!fechaValue){
+		alert("Debes ingresar una fecha");
+	    return;
+	};
+	const fechaSplit = fechaValue.split(/[\/\-\\]+/);
+	let year = fechaSplit[0];
+	let month = fechaSplit[1];
+	let day = fechaSplit[2];
+	let texto = document.createElement('p');
+	texto.style.whiteSpace = 'pre-wrap';
 	try {
 		const ingresosRef = collection(db, 'ingresostemporal'); 
 		const snapIngresos = await getDocs(ingresosRef);
 		if (!snapIngresos.empty){
-			const promises = snapIngresos.docs.map(async (d) => {
+			const users = snapIngresos.size;
+			const promises1 = snapIngresos.docs.map(async (d) => {
 				const docId = d.id;
 				const ingresosDBRef = doc(db, 'ingresosdb', docId);
 				
 				// Crear registro en 'ingresosdb'
 				await setDoc(ingresosDBRef, d.data(), { merge: true });
-				console.log("Registro creado en 'ingresosdb'");
+				//console.log("Registro creado en 'ingresosdb'");
 
 				// Eliminar el documento de 'ingresostemporal'
 				const ingresosTemporalRef = doc(ingresosRef, docId);
 				await deleteDoc(ingresosTemporalRef);
-				console.log(`Documento eliminado de 'ingresostemporal': ${docId}`);
+				//console.log(`Documento eliminado de 'ingresostemporal': ${docId}`);
 			});
 
 			// Espera a que todas las promesas se completen
-			await Promise.all(promises);
-			console.log("Todos los registros han sido procesados y eliminados.");
-			
-			const monthTemporalRef = doc(db, 'a2024temporal', String(month));
-			const temporalCollectionRef = collection(monthTemporalRef, String(day));
+			await Promise.all(promises1);
+			//console.log("Todos los registros han sido procesados y eliminados.");
+			texto.textContent = `${users} nuevos usuarios creados.`;
 		} else {
-			console.log("La informacion de ingresos está actualizada.");
+			//console.log("La informacion de ingresos está actualizada.");
+		    texto.textContent = 'No se encontraron usuarios nuevos.';
 		}
-		
-	} catch (error){
-		console.log(`Error en copia ingresos: ${error}`);
-		alert("Error en copia de seguridad de ingresos.");
-	}
-	try {
-        // Copia desde 'a2024temporal' a 'a2024db'
-        const temporalCollectionRef = collection(db, 'a2024temporal');
+		// Copia desde 'temporal -> principal'
+        const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal', String(month), String(day));
         const snapTemporal = await getDocs(temporalCollectionRef);
         if (!snapTemporal.empty) {
+			const ingresos = snapTemporal.size;
             const promises = snapTemporal.docs.map(async (d) => {
                 const docId = d.id;
 
-                // Usar el mismo id para la nueva referencia en 'a2024db'
-                const newDocRef = doc(db, 'a2024db', docId);
+                // Crear referencia al documento en 'a2024db'
+                const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), docId);
 
                 // Copiar el documento a 'a2024db'
                 await setDoc(newDocRef, d.data(), { merge: true });
-                console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
+                //console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
 
                 // Eliminar el documento de la colección temporal
                 const temporalDocRef = doc(temporalCollectionRef, docId);
                 await deleteDoc(temporalDocRef);
-                console.log(`Documento eliminado de 'a2024temporal': ${docId}`);
+                //console.log(`Documento eliminado de 'a${year}temporal/${month}/${day}': ${docId}`);
             });
 
+            // Esperar a que todas las promesas se completen
             await Promise.all(promises);
-            console.log("Todos los registros de a2024temporal han sido procesados y eliminados.");
+            //console.log("Todos los registros de la colección temporal han sido procesados y eliminados.");
+			texto.textContent += `\n${ingresos} nuevos ingresos creados.`;
         } else {
-            console.log("Los registros en 'a2024temporal' están actualizados.");
+            //console.log("No hay registros en la colección temporal para copiar.");
+			texto.textContent += '\nNo se encontaron ingresos para esa fecha.';
         }
-    } catch (error) {
-        console.error("Error en copia de seguridad principal: ", error);
-    }
-	/*try {
-		const temporalCollectionRef = collection(db, 'a2024temporal');
-		// Obtener todos los documentos de la colección temporal
-		const snapTemporal = await getDocs(temporalCollectionRef);
-		if (!snapTemporal.empty){
-			// Crear un array de promesas para manejar la copia y eliminación
-			const promises = snapTemporal.docs.map(async (d) => {
-				const docId = d.id;
-				const newDocRef = doc(db, 'a2024db', docId);
-
-				// Copiar el documento a 'a2024db'
-				await setDoc(newDocRef, d.data(), { merge: true });
-				console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
-
-				// Eliminar el documento de la colección temporal
-				const temporalDocRef = doc(temporalCollectionRef, docId);
-				await deleteDoc(temporalDocRef);
-				console.log(`Documento eliminado de 'a2024temporal': ${docId}`);
-			});
-
-			// Esperar a que todas las promesas se completen
-			await Promise.all(promises);
-    		console.log("Todos los registros han sido procesados y eliminados.");
-		} else {
-			console.log("Los registros principales están actualizados");
-		}
-	} catch (error) {
-		console.error(`Error en copia de principal: ${error}`);
-		alert("Error en copia de seguridad principal.")
-	}*/
+	} catch (error){
+		console.log(`Error: ${error}`);
+		alert("Error en copia de seguridad.");
+	}
+	info.appendChild(texto);
+	info.style.display = 'flex';
 });
 
 document.getElementById('backMenu').addEventListener('click', function(){

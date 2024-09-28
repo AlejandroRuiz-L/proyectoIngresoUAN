@@ -62,7 +62,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 			if (id){
 				const newDocRef = doc(db, 'ingresos', id);
 				const newDocSnap = await getDoc(newDocRef);
-				if (!newDocSnap.exists()){
+				if (!newDocSnap.exists()){//falta manejar limpieza de db principal
 					await setDoc(newDocRef, docData, {merge:true});
 					await setDoc(newDocRef, data, {merge:true});
 					await deleteDoc(docRef);
@@ -72,6 +72,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 			} else {
 				await setDoc(docRef, data, {merge:true});	
 			}
+			await setDoc(doc(db, 'ingresostemporal', id), data, {merge:true});
 			localStorage.clear();
 			alert("Se ha actualizado el registro.");
 			window.close();
