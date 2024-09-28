@@ -65,8 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (docRefSnap.exists()){
 					alert('El número de documento ya se encuentra registrado.');
 				} else {
-					//crea el registro en ingresos
+					const docRefTemporal = doc(db, 'ingresostemporal', String(numId));
+					//crea el registro en ingresos y en temporal
 					await setDoc(docRef, dataToSend, {merge: true});
+					await setDoc(docRefTemporal, dataToSend, {merge: true});
 					//maneja la obtención de un serverTimestamp
 					const dateDocRef = doc(db, 'hora', 'actual');
 				    await setDoc(dateDocRef, {horaActual: serverTimestamp()});
@@ -83,6 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					const monthDocRef = doc(db, 'a'+String(year), String(month));
 					const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(numId));
 					await setDoc(newTimeDocRef, dataToSend, {merge:true});
+					//actualiza registro temporal
+					const monthTemporalRef = doc(db, 'a'+String(year)+'temporal', String(month));
+					const temporalYear = doc(collection(monthTemporalRef, String(day)), String(numId));
+					await setDoc(temporalYear, dataToSend, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
 				}
 			} catch (error) {

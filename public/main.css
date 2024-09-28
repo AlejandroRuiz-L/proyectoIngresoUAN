@@ -21,9 +21,17 @@ body{
 .container{
 	display: flex;
 	flex-direction: column;
-	gap: 30px;
+	gap: 40px;
 	margin: 40px auto;
 	width: 90%;
+}
+
+.caja{
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	border-bottom: 4px solid #997b21;
+	padding-bottom: 12px;
 }
 
 .fondo{
@@ -72,7 +80,7 @@ body{
 	margin: 0 auto;
 	width: 35%;
 	height: 40px;
-	background: linear-gradient(45deg, #8a6225, #dfbd59);
+	background: linear-gradient(45deg, #dfbd59, #8a6225);
 	border: 1px solid black;
 	border-radius: 20px;
 	box-shadow: 4px 4px 4px;
@@ -82,7 +90,7 @@ body{
 
 .boton:hover{
 	transform: scale(1.1);
-	background: linear-gradient(10deg, #8a6225, #dfbd59);
+	background: linear-gradient(10deg, #dfbd59, #8a6225);
 	box-shadow: 6px 6px 6px;
 }
 

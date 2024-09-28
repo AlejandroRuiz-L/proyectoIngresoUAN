@@ -1,6 +1,6 @@
 import { getAuth, signOut, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, getDocs, deleteDoc, setDoc, collection } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 // Configura Firebase
 const firebaseConfig = {
@@ -112,7 +112,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		return;
 	}
 	try {
-		const docRef = doc(db, 'ingresos', docId);
+		const docRef = doc(db, 'ingresosdb', docId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
 			const data = docSnap.data();
@@ -187,7 +187,7 @@ diario.addEventListener('click', async () => {
 	const month = fechaSplit[1];
 	const day = fechaSplit[2];
 	try {
-		const monthDocRef = doc(db, 'a'+String(year), String(month));
+		const monthDocRef = doc(db, 'a'+String(year)+'db', String(month));
 		const docRef = collection(monthDocRef, String(day));
 		const docSnap = await getDocs(docRef);
 		if (!docSnap.empty){
@@ -257,7 +257,7 @@ semanal.addEventListener('click', async () => {
 				i--;
 				continue;
 			};
-			const monthDocRef = doc(db, 'a'+String(year), String(month));
+			const monthDocRef = doc(db, 'a'+String(year)+'db', String(month));
 		    const docRef = collection(monthDocRef, String(day).length < 2 ? '0' + String(day) : String(day));
 		    const docSnap = await getDocs(docRef);
 			counterPeople += docSnap.size;
@@ -306,7 +306,7 @@ document.getElementById('registros').addEventListener('click', async () => {
 	try {
 		info.innerHTML = '';
 		dataDownload = [];
-		const docsRef = collection(db, 'ingresos');
+		const docsRef = collection(db, 'ingresosdb');
 		const docSnap = await getDocs(docsRef);
 		let counter = 0;
 		dataDownload.push(["Total_Usuarios"]);
@@ -342,6 +342,100 @@ document.getElementById('registros').addEventListener('click', async () => {
 		console.log(`Error: ${error}`);
 		alert("Error al consultar los registros.");
 	}
+});
+
+document.querySelector('#copia').addEventListener('click', async () => {
+	try {
+		const ingresosRef = collection(db, 'ingresostemporal'); 
+		const snapIngresos = await getDocs(ingresosRef);
+		if (!snapIngresos.empty){
+			const promises = snapIngresos.docs.map(async (d) => {
+				const docId = d.id;
+				const ingresosDBRef = doc(db, 'ingresosdb', docId);
+				
+				// Crear registro en 'ingresosdb'
+				await setDoc(ingresosDBRef, d.data(), { merge: true });
+				console.log("Registro creado en 'ingresosdb'");
+
+				// Eliminar el documento de 'ingresostemporal'
+				const ingresosTemporalRef = doc(ingresosRef, docId);
+				await deleteDoc(ingresosTemporalRef);
+				console.log(`Documento eliminado de 'ingresostemporal': ${docId}`);
+			});
+
+			// Espera a que todas las promesas se completen
+			await Promise.all(promises);
+			console.log("Todos los registros han sido procesados y eliminados.");
+			
+			const monthTemporalRef = doc(db, 'a2024temporal', String(month));
+			const temporalCollectionRef = collection(monthTemporalRef, String(day));
+		} else {
+			console.log("La informacion de ingresos está actualizada.");
+		}
+		
+	} catch (error){
+		console.log(`Error en copia ingresos: ${error}`);
+		alert("Error en copia de seguridad de ingresos.");
+	}
+	try {
+        // Copia desde 'a2024temporal' a 'a2024db'
+        const temporalCollectionRef = collection(db, 'a2024temporal');
+        const snapTemporal = await getDocs(temporalCollectionRef);
+        if (!snapTemporal.empty) {
+            const promises = snapTemporal.docs.map(async (d) => {
+                const docId = d.id;
+
+                // Usar el mismo id para la nueva referencia en 'a2024db'
+                const newDocRef = doc(db, 'a2024db', docId);
+
+                // Copiar el documento a 'a2024db'
+                await setDoc(newDocRef, d.data(), { merge: true });
+                console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
+
+                // Eliminar el documento de la colección temporal
+                const temporalDocRef = doc(temporalCollectionRef, docId);
+                await deleteDoc(temporalDocRef);
+                console.log(`Documento eliminado de 'a2024temporal': ${docId}`);
+            });
+
+            await Promise.all(promises);
+            console.log("Todos los registros de a2024temporal han sido procesados y eliminados.");
+        } else {
+            console.log("Los registros en 'a2024temporal' están actualizados.");
+        }
+    } catch (error) {
+        console.error("Error en copia de seguridad principal: ", error);
+    }
+	/*try {
+		const temporalCollectionRef = collection(db, 'a2024temporal');
+		// Obtener todos los documentos de la colección temporal
+		const snapTemporal = await getDocs(temporalCollectionRef);
+		if (!snapTemporal.empty){
+			// Crear un array de promesas para manejar la copia y eliminación
+			const promises = snapTemporal.docs.map(async (d) => {
+				const docId = d.id;
+				const newDocRef = doc(db, 'a2024db', docId);
+
+				// Copiar el documento a 'a2024db'
+				await setDoc(newDocRef, d.data(), { merge: true });
+				console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
+
+				// Eliminar el documento de la colección temporal
+				const temporalDocRef = doc(temporalCollectionRef, docId);
+				await deleteDoc(temporalDocRef);
+				console.log(`Documento eliminado de 'a2024temporal': ${docId}`);
+			});
+
+			// Esperar a que todas las promesas se completen
+			await Promise.all(promises);
+    		console.log("Todos los registros han sido procesados y eliminados.");
+		} else {
+			console.log("Los registros principales están actualizados");
+		}
+	} catch (error) {
+		console.error(`Error en copia de principal: ${error}`);
+		alert("Error en copia de seguridad principal.")
+	}*/
 });
 
 document.getElementById('backMenu').addEventListener('click', function(){

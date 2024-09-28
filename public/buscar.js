@@ -61,9 +61,54 @@ document.addEventListener('DOMContentLoaded', () => {
 		botones.style.display = 'none';
 		buscarForm.reset();
 		buscarForm.style.display = 'flex';
-	}
-
-	document.getElementById('cancelar').addEventListener('click', accionCancelar);
+	};
+	
+	document.getElementById('entrada').addEventListener('click', async () => {
+		try {
+			const docId = document.querySelector('#docId').value.trim();
+			const docRef = doc(db, 'ingresos', docId);
+			const docSnap = await getDoc(docRef);
+			const data = docSnap.data();
+			let indice = 'ingreso1';
+			if (data.ingresos){
+				indice = `ingreso${Object.keys(data.ingresos).length + 1}`;
+			};
+			let dataToSend = {
+				ingresos:{[indice]: serverTimestamp()}
+			};
+			await setDoc(docRef, dataToSend, {merge:true});
+			//maneja la obtención de un serverTimestamp
+			const dateDocRef = doc(db, 'hora', 'actual');
+			await setDoc(dateDocRef, {horaActual: serverTimestamp()});
+			const time = await getDoc(dateDocRef);
+			const dataTime = time.data().horaActual;
+			const fecha = formatDate(dataTime);
+			//maneja la obtencion de la fecha
+			const arrayDate = fecha.split(' ')[0];
+			const fechaSplit = arrayDate.split('/');
+			const year = fechaSplit[2];
+			const month = fechaSplit[1];
+			const day = fechaSplit[0];
+			//crea el registro diario en base al serverTimestamp
+			const newDataUser = {
+				documento: data.documento,
+				nombre: data.nombre,
+				correo: data.correo,
+				identificacion: data.identificacion,
+				telefono: data.telefono,
+				visitante: data.visitante,
+				ingresos: {[indice]: serverTimestamp()}
+			};
+			const monthDocRef = doc(db, 'a'+String(year), String(month));
+			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
+			await setDoc(newTimeDocRef, newDataUser, {merge:true});
+			accionCancelar();
+			alert("Se ha creado el registro de entrada.");
+		} catch (error) {
+			console.log(`Error: ${error}`);
+			alert("Error al crear el registro.");
+		}
+	});
 
 	document.getElementById('salida').addEventListener('click', async () => {
 		try {
@@ -113,50 +158,5 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	
-	document.getElementById('entrada').addEventListener('click', async () => {
-		try {
-			const docId = document.querySelector('#docId').value.trim();
-			const docRef = doc(db, 'ingresos', docId);
-			const docSnap = await getDoc(docRef);
-			const data = docSnap.data();
-			let indice = 'ingreso1';
-			if (data.ingresos){
-				indice = `ingreso${Object.keys(data.ingresos).length + 1}`;
-			};
-			let dataToSend = {
-				ingresos:{[indice]: serverTimestamp()}
-			};
-			await setDoc(docRef, dataToSend, {merge:true});
-			//maneja la obtención de un serverTimestamp
-			const dateDocRef = doc(db, 'hora', 'actual');
-			await setDoc(dateDocRef, {horaActual: serverTimestamp()});
-			const time = await getDoc(dateDocRef);
-			const dataTime = time.data().horaActual;
-			const fecha = formatDate(dataTime);
-			//maneja la obtencion de la fecha
-			const arrayDate = fecha.split(' ')[0];
-			const fechaSplit = arrayDate.split('/');
-			const year = fechaSplit[2];
-			const month = fechaSplit[1];
-			const day = fechaSplit[0];
-			//crea el registro diario en base al serverTimestamp
-			const newDataUser = {
-				documento: data.documento,
-				nombre: data.nombre,
-				correo: data.correo,
-				identificacion: data.identificacion,
-				telefono: data.telefono,
-				visitante: data.visitante,
-				ingresos: {[indice]: serverTimestamp()}
-			};
-			const monthDocRef = doc(db, 'a'+String(year), String(month));
-			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
-			await setDoc(newTimeDocRef, newDataUser, {merge:true});
-			accionCancelar();
-			alert("Se ha creado el registro de entrada.");
-		} catch (error) {
-			console.log(`Error: ${error}`);
-			alert("Error al crear el registro.");
-		}
-	})
+	document.getElementById('cancelar').addEventListener('click', accionCancelar);
 });
