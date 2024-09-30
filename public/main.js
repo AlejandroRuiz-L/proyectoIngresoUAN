@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					const temporalYear = doc(collection(monthTemporalRef, String(day)), String(numId));
 					await setDoc(temporalYear, dataToSend, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
+					window.location.href= "index.html";
 				}
 			} catch (error) {
 				console.error('Error al enviar datos:', error);

@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docRef = doc(db, 'ingresostemporal', String(docId));
 			const docSnap = await getDoc(docRef);
 			let indice = 'ingreso1';
-			if (docSnap.data().ingresos){
+			if (docSnap.exists()){
 				indice = `ingreso${Object.keys(docSnap.data().ingresos).length + 1}`;
 			};
 			let dataToSend = {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
 			const docRefSnap = await getDoc(docRef);
-			if (docRefSnap.data().ingresos){
+			if (docRefSnap.exists()){
 				indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
 			}
 			let dataToSend = {

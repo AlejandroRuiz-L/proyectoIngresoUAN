@@ -112,7 +112,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		return;
 	}
 	try {
-		const docRef = doc(db, 'ingresos', docId);
+		const docRef = doc(db, 'ingresosdb', docId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
 			const data = docSnap.data();
@@ -371,13 +371,13 @@ document.querySelector('#copia').addEventListener('click', async () => {
 					let newSalidas = {};
 					let indice = 1;
 					if (ingresosDBRefSnap.data().ingresos){
-						indice = Object.keys(ingresosDBRefSnap.data().ingresos).length;
+						indice = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
 					}
-					const ingresos = d.data().ingresos || {};
+					const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 					const salidas = d.data().salidas || {};
 					Object.keys(ingresos).forEach(key => {
-						newIngresos[`ingreso${indice}`] = ingresos[key];
-						newSalidas[`ingreso${indice}`] = salidas[key];
+						newIngresos[`ingreso${indice}`] = ingresos[key] ? ingresos[key] : 'N/A';
+						newSalidas[`ingreso${indice}`] = salidas[key] ? salidas[key] : 'N/A';
 						indice += 1;
 					});
 					const dataToSend = {
@@ -387,7 +387,7 @@ document.querySelector('#copia').addEventListener('click', async () => {
 					await setDoc(ingresosDBRef, dataToSend, {merge:true});
 				} else {
 				    // Crear registro en 'ingresosdb'
-				    await setDoc(ingresosDBRef, d.data(), { merge: true });
+				    await setDoc(ingresosDBRef, d.data(), {merge:true});
 				}
 
 				// Eliminar el documento de 'ingresostemporal'
