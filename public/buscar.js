@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				mensaje.style.marginTop = '30px';
 				mensaje.textContent = "Si tus datos son incorrectos presiona 'Cancelar'\nde lo contrario registra tu ingreso o tu salida.";
 				let texto = document.createElement('p');
-				texto.textContent += `Documento: ${data.identificacion}\nNombre: ${data.nombre}`;
+				texto.textContent += `${data.documento}: ${data.identificacion}\n${data.nombre}`;
 				texto.classList.add('lista-item');
 				divInfo.appendChild(texto);
 				divInfo.appendChild(mensaje);
@@ -66,12 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('entrada').addEventListener('click', async () => {
 		try {
 			const docId = document.querySelector('#docId').value.trim();
-			const docRef = doc(db, 'ingresos', docId);
+			const docRef = doc(db, 'ingresostemporal', String(docId));
 			const docSnap = await getDoc(docRef);
-			const data = docSnap.data();
 			let indice = 'ingreso1';
-			if (data.ingresos){
-				indice = `ingreso${Object.keys(data.ingresos).length + 1}`;
+			if (docSnap.data().ingresos){
+				indice = `ingreso${Object.keys(docSnap.data().ingresos).length + 1}`;
 			};
 			let dataToSend = {
 				ingresos:{[indice]: serverTimestamp()}
@@ -90,18 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			const month = fechaSplit[1];
 			const day = fechaSplit[0];
 			//crea el registro diario en base al serverTimestamp
-			const newDataUser = {
-				documento: data.documento,
-				nombre: data.nombre,
-				correo: data.correo,
-				identificacion: data.identificacion,
-				telefono: data.telefono,
-				visitante: data.visitante,
-				ingresos: {[indice]: serverTimestamp()}
-			};
-			const monthDocRef = doc(db, 'a'+String(year), String(month));
-			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
-			await setDoc(newTimeDocRef, newDataUser, {merge:true});
+			const monthDocRef = doc(db, 'a'+String(year)+'temporal', String(month));
+			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(docId));
+			await setDoc(newTimeDocRef, dataToSend, {merge:true});
 			accionCancelar();
 			alert("Se ha creado el registro de entrada.");
 		} catch (error) {
@@ -113,12 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('salida').addEventListener('click', async () => {
 		try {
 			const docId = document.querySelector('#docId').value.trim();
-            const docRef = doc(db, 'ingresos', docId);
-			const docSnap = await getDoc(docRef);
-			const data = docSnap.data();
+            const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
-			if (data.salidas){
-				indice = `ingreso${Object.keys(data.ingresos).length}`;
+			const docRefSnap = await getDoc(docRef);
+			if (docRefSnap.data().ingresos){
+				indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
 			}
 			let dataToSend = {
 			    salidas:{[indice]:serverTimestamp()}
@@ -137,18 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			const month = fechaSplit[1];
 			const day = fechaSplit[0];
 			//crea el registro diario en base al serverTimestamp
-			const newDataUser = {
-				documento: data.documento,
-				nombre: data.nombre,
-				correo: data.correo,
-				identificacion: data.identificacion,
-				telefono: data.telefono,
-				visitante: data.visitante,
-				salidas: {[indice]: serverTimestamp()}
-			};
-		    const monthDocRef = doc(db, 'a'+String(year), String(month));
-			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(data.identificacion));
-			await setDoc(newTimeDocRef, newDataUser, {merge:true});
+		    const monthDocRef = doc(db, 'a'+String(year)+'temporal', String(month));
+			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(docId));
+			await setDoc(newTimeDocRef, dataToSend, {merge:true});
 			accionCancelar();
 			alert("Se ha creado el registro de salida.");
 			
@@ -156,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.log(`Error: ${error}`);
 			alert("Error al registrar hora de salida.");
 		}
-	});
-	
+	});	
 	document.getElementById('cancelar').addEventListener('click', accionCancelar);
 });

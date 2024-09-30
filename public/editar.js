@@ -1,7 +1,8 @@
 import { doc, getDoc, db, setDoc, deleteDoc} from './configDB.js';
 
 const idLabel = document.querySelector('#idLabel');
-idLabel.textContent += `${localStorage.getItem('p1')}`;
+const userId = localStorage.getItem('p1')
+idLabel.textContent += `${userId}`;
 const docLabel = document.querySelector('#docLabel');
 docLabel.textContent += `${localStorage.getItem('p2')}`;
 const nameLabel = document.querySelector('#nameLabel');
@@ -54,7 +55,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	if (visit){
 		data['visitante'] = visit;
 	};
-	const docRef = doc(db, 'ingresos', localStorage.getItem('p1'));
+	const docRef = doc(db, 'ingresos', userId);
 	try {
 		const docSnap = await getDoc(docRef);
 		const docData = docSnap.data();
@@ -72,7 +73,14 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 			} else {
 				await setDoc(docRef, data, {merge:true});	
 			}
-			await setDoc(doc(db, 'ingresostemporal', id), data, {merge:true});
+			const temporalRef = doc(db, 'ingresostemporal', String(userId));
+			const snapTemporal = await getDoc(temporalRef);
+			if (snapTemporal.exists()){
+				await deleteDoc(temporalRef);
+			}
+			console.log(userId);
+			await setDoc(doc(db, 'ingresostemporal', String(id)), docData, {merge:true});
+			//await setDoc(doc(db, 'ingresostemporal', id), data, {merge:true});
 			localStorage.clear();
 			alert("Se ha actualizado el registro.");
 			window.close();

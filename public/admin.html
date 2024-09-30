@@ -9,7 +9,10 @@
 </head>
 <body>
   <h1 class="h1">Administración</h1>
-  <button id="logout" class="protected-content boton">Cerrar Sesión</button>
+  <div class="caja">
+    <button id="logout" class="protected-content boton">Cerrar Sesión</button>
+    <button class="boton btn-flecha" title="inicio"><a href="index.html" class="link"><i class="fas fa-house-user"></i></a></button>
+  </div>
   <main class="container form">
     <form id="admin-form">
 	  <label for="correo">Correo:</label>
@@ -25,20 +28,21 @@
 	    <input type="text" id="docId" class="input" placeholder="Número de documento a buscar">
 	    <button class="boton" id="buscar">Buscar</button>
 	  </div>
+	  
 	  <div class="caja">
 	    <input type="date" id="fecha" class="input">
 	    <button class="boton" id="diario">Reporte Diario</button>
 	    <button class="boton" id="semanal">Reporte Semanal</button>
-	    <button class="boton" id="registros">Registros</button>
 		<button class="boton" id="copia">Copia de Seguridad</button>
+		<button class="boton" id="registros">Registros</button>
+		<button class="boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
 	  </div>
-	  <button class="boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
 	</div>
 	
 	<div id="info" class="protected-content container"></div>
+	
 	<button id="downloadBTN" class="protected-content boton btn-flecha" title="Descargar"><i class="fas fa-arrow-down"></i></button>
   </main>
-  <button class="boton btn-flecha"><a href="index.html" class="link"><i class="fas fa-house-user"></i></a></button>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script type="module" src="admin.js" defer></script>
 </body>

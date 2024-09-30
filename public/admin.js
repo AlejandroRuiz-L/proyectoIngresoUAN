@@ -112,7 +112,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		return;
 	}
 	try {
-		const docRef = doc(db, 'ingresosdb', docId);
+		const docRef = doc(db, 'ingresos', docId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
 			const data = docSnap.data();
@@ -365,10 +365,30 @@ document.querySelector('#copia').addEventListener('click', async () => {
 			const promises1 = snapIngresos.docs.map(async (d) => {
 				const docId = d.id;
 				const ingresosDBRef = doc(db, 'ingresosdb', docId);
-				
-				// Crear registro en 'ingresosdb'
-				await setDoc(ingresosDBRef, d.data(), { merge: true });
-				//console.log("Registro creado en 'ingresosdb'");
+				const ingresosDBRefSnap = await getDoc(ingresosDBRef);
+				if (ingresosDBRefSnap.exists()){
+					let newIngresos = {};
+					let newSalidas = {};
+					let indice = 1;
+					if (ingresosDBRefSnap.data().ingresos){
+						indice = Object.keys(ingresosDBRefSnap.data().ingresos).length;
+					}
+					const ingresos = d.data().ingresos || {};
+					const salidas = d.data().salidas || {};
+					Object.keys(ingresos).forEach(key => {
+						newIngresos[`ingreso${indice}`] = ingresos[key];
+						newSalidas[`ingreso${indice}`] = salidas[key];
+						indice += 1;
+					});
+					const dataToSend = {
+						ingresos: newIngresos,
+						salidas: newSalidas
+					};
+					await setDoc(ingresosDBRef, dataToSend, {merge:true});
+				} else {
+				    // Crear registro en 'ingresosdb'
+				    await setDoc(ingresosDBRef, d.data(), { merge: true });
+				}
 
 				// Eliminar el documento de 'ingresostemporal'
 				const ingresosTemporalRef = doc(ingresosRef, docId);
@@ -388,27 +408,37 @@ document.querySelector('#copia').addEventListener('click', async () => {
         const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal', String(month), String(day));
         const snapTemporal = await getDocs(temporalCollectionRef);
         if (!snapTemporal.empty) {
-			const ingresos = snapTemporal.size;
+			const totalIngresos = snapTemporal.size;
             const promises = snapTemporal.docs.map(async (d) => {
                 const docId = d.id;
+				const ingresosdbRef = doc(db, 'ingresosdb', String(docId));
+				const snapIngresosdb = await getDoc(ingresosdbRef);
+				const data = snapIngresosdb.data();
+				const dataToSend = {
+					nombre: data.nombre,
+					documento: data.documento,
+					identificacion: data.identificacion,
+					correo: data.correo,
+					telefono: data.telefono,
+					visitante: data.visitante,
+					ingresos: d.data().ingresos ? d.data().ingresos : 'N/A',
+					salidas: d.data().salidas ? d.data().salidas : 'N/A'
+				};
 
                 // Crear referencia al documento en 'a2024db'
-                const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), docId);
+                const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(docId));
 
                 // Copiar el documento a 'a2024db'
-                await setDoc(newDocRef, d.data(), { merge: true });
-                //console.log(`Registro creado en 'a2024db' con ID: ${docId}`);
+                await setDoc(newDocRef, dataToSend, { merge: true });
 
                 // Eliminar el documento de la colección temporal
                 const temporalDocRef = doc(temporalCollectionRef, docId);
                 await deleteDoc(temporalDocRef);
-                //console.log(`Documento eliminado de 'a${year}temporal/${month}/${day}': ${docId}`);
             });
 
             // Esperar a que todas las promesas se completen
             await Promise.all(promises);
-            //console.log("Todos los registros de la colección temporal han sido procesados y eliminados.");
-			texto.textContent += `\n${ingresos} nuevos ingresos creados.`;
+			texto.textContent += `\n${totalIngresos} nuevos ingresos creados.`;
         } else {
             //console.log("No hay registros en la colección temporal para copiar.");
 			texto.textContent += '\nNo se encontaron ingresos para esa fecha.';
