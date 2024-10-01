@@ -61,9 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				    nombre: name,
 				    documento: typeId,
 				    identificacion: numId,
-				    correo: email,
-				    telefono: tel,
-				    visitante: typeVisitor,
+				    correo: email ? email : 'N/A',
+				    telefono: tel ? tel : 'N/A',
+				    visitante: typeVisitor ? typeVisitor : 'N/A',
 				    ingresos: {ingreso1: serverTimestamp()}
 				};
 				if (docRefSnap.exists()){
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					//crea el registro diario temporal en base al serverTimestamp
 					const monthTemporalRef = doc(db, 'a'+String(year)+'temporal', String(month));
 					const temporalYear = doc(collection(monthTemporalRef, String(day)), String(numId));
-					await setDoc(temporalYear, dataToSend, {merge:true});
+					await setDoc(temporalYear, {ingresos: {ingreso1: serverTimestamp()}, salidas: {}}, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
 					window.location.href= "index.html";
 				}

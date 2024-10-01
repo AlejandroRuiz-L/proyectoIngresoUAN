@@ -369,16 +369,21 @@ document.querySelector('#copia').addEventListener('click', async () => {
 				if (ingresosDBRefSnap.exists()){
 					let newIngresos = {};
 					let newSalidas = {};
-					let indice = 1;
+					let indiceIngresos = 1;
+					let indiceSalidas = 1;
 					if (ingresosDBRefSnap.data().ingresos){
-						indice = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
+						indiceIngresos = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
+						indiceSalidas = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
 					}
 					const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 					const salidas = d.data().salidas || {};
 					Object.keys(ingresos).forEach(key => {
-						newIngresos[`ingreso${indice}`] = ingresos[key] ? ingresos[key] : 'N/A';
-						newSalidas[`ingreso${indice}`] = salidas[key] ? salidas[key] : 'N/A';
-						indice += 1;
+						newIngresos[`ingreso${indiceIngresos}`] = ingresos[key] ? ingresos[key] : 'N/A';
+						indiceIngresos += 1;
+					});
+					Object.keys(salidas).forEach(key => {
+						newSalidas[`ingreso${indiceSalidas}`] = salidas[key] ? salidas[key] : 'N/A';
+						indiceSalidas += 1;
 					});
 					const dataToSend = {
 						ingresos: newIngresos,
@@ -389,20 +394,16 @@ document.querySelector('#copia').addEventListener('click', async () => {
 				    // Crear registro en 'ingresosdb'
 				    await setDoc(ingresosDBRef, d.data(), {merge:true});
 				}
-
 				// Eliminar el documento de 'ingresostemporal'
 				const ingresosTemporalRef = doc(ingresosRef, docId);
 				await deleteDoc(ingresosTemporalRef);
-				//console.log(`Documento eliminado de 'ingresostemporal': ${docId}`);
 			});
-
 			// Espera a que todas las promesas se completen
 			await Promise.all(promises1);
-			//console.log("Todos los registros han sido procesados y eliminados.");
-			texto.textContent = `${users} nuevos usuarios creados.`;
+			texto.textContent = `${users} usuarios actualizados.`;
 		} else {
 			//console.log("La informacion de ingresos está actualizada.");
-		    texto.textContent = 'No se encontraron usuarios nuevos.';
+		    texto.textContent = 'No se encontraron nuevos datos de usuarios.';
 		}
 		// Copia desde 'temporal -> principal'
         const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal', String(month), String(day));
@@ -414,28 +415,43 @@ document.querySelector('#copia').addEventListener('click', async () => {
 				const ingresosdbRef = doc(db, 'ingresosdb', String(docId));
 				const snapIngresosdb = await getDoc(ingresosdbRef);
 				const data = snapIngresosdb.data();
-				const dataToSend = {
-					nombre: data.nombre,
-					documento: data.documento,
-					identificacion: data.identificacion,
-					correo: data.correo,
-					telefono: data.telefono,
-					visitante: data.visitante,
-					ingresos: d.data().ingresos ? d.data().ingresos : 'N/A',
-					salidas: d.data().salidas ? d.data().salidas : 'N/A'
-				};
-
                 // Crear referencia al documento en 'a2024db'
                 const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(docId));
-
-                // Copiar el documento a 'a2024db'
-                await setDoc(newDocRef, dataToSend, { merge: true });
-
+				const snapNewDocRef = await getDoc(newDocRef);
+				if (snapNewDocRef.exists()){
+					const dataDoc = snapNewDocRef.data();
+					let dataToSend = {
+					    ingresos: {},
+					    salidas: {}
+				    };
+					let indiceIngresos = Object.keys(dataDoc.ingresos).length + 1;
+					let indiceSalidas =  Object.keys(dataDoc.ingresos).length + 1;
+					Object.values(d.data().ingresos).forEach(value => {
+						dataToSend.ingresos[`ingreso${indiceIngresos}`] = value;
+						indiceIngresos += 1;
+					});
+					Object.values(d.data().salidas).forEach(value => {
+						dataToSend.salidas[`ingreso${indiceSalidas}`] = value;
+						indiceSalidas += 1;
+					});
+					await setDoc(newDocRef, dataToSend, { merge: true });
+				} else {
+					const newDataToSend = {
+						nombre: data.nombre,
+						documento: data.documento,
+						identificacion: data.identificacion,
+						correo: data.correo,
+						telefono: data.telefono,
+						visitante: data.visitante,
+						ingresos: d.data().ingresos ? d.data().ingresos : {},
+						salidas: d.data().salidas ? d.data().salidas : {}
+					};
+					await setDoc(newDocRef, newDataToSend, {merge:true});
+				}
                 // Eliminar el documento de la colección temporal
                 const temporalDocRef = doc(temporalCollectionRef, docId);
                 await deleteDoc(temporalDocRef);
             });
-
             // Esperar a que todas las promesas se completen
             await Promise.all(promises);
 			texto.textContent += `\n${totalIngresos} nuevos ingresos creados.`;

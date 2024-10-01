@@ -21,10 +21,12 @@ service cloud.firestore {
       allow read, write: if true;
     }
     match /ingresos {
-      allow read, write: if true;
+      allow read, create: if true;
+      allow update, delete: if request.auth != null && request.auth.uid == '29zF5UA56AO46ooM6KAgRhOP6Vi1';
     }
     match /ingresos/{doc} {
-      allow read, write: if true;
+      allow read, create: if true;
+      allow update, delete: if request.auth != null && request.auth.uid == '29zF5UA56AO46ooM6KAgRhOP6Vi1';
     }
     match /ingresostemporal {
       allow read, write: if true;

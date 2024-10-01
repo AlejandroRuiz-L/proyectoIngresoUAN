@@ -14,11 +14,13 @@
     <button id="sendDate">Test</button>
 
     <script>
-	  let day = 6;
-	  if (String(day).length < 2){
-	    day = '0' + String(day);
+	  let doc = {};
+	  let indice = doc ? Object.keys(doc).length + 1 : 5;
+	  if (indice){
+	    console.log(`${indice} existe`);
+	  } else {
+	    console.log(`${indice} no existe`);
 	  }
-	  console.log(day, typeof day);
     </script>
 </body>
 </html>
