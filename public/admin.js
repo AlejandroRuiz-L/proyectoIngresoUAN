@@ -26,7 +26,7 @@ const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "CORREO", "TELEFONO
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
 const formatDate = (date) => {
-				if (!date) return 'N/A';
+				if (!date || date == 'N/A') return 'N/A';
 				const options = {
 					day: '2-digit',
 					month: '2-digit',
@@ -103,7 +103,7 @@ document.getElementById('logout').addEventListener('click', async () => {
 });
 
 //manejo de evento clik de los botones
-document.getElementById('buscar').addEventListener('click', async () => {
+/*document.getElementById('buscar').addEventListener('click', async () => {
 	info.innerHTML = '';
 	dataDownload = [];
 	const docId = document.querySelector('#docId').value.trim();
@@ -172,10 +172,11 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		console.log(`Error: ${error}`);
 		alert("Error al consultar el documento");
 	}
-});
+});*/
 
 diario.addEventListener('click', async () => {
-	info.innerHTML = '';
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
 	dataDownload = [];
 	const fecha = document.querySelector('#fecha').value;
 	if (!fecha){
@@ -215,8 +216,8 @@ diario.addEventListener('click', async () => {
 			const msg = document.createElement('p');
 			msg.style.whiteSpace = 'pre-wrap';
 			msg.textContent = `Se encontraron ${docSnap.size} usuarios.\n${counter} registros están listos para descargar.`;
+			info.innerHTML = '';
 			info.appendChild(msg);
-			info.style.display = 'flex';
 			downloadBTN.style.display = 'block';
 		} else {
 			alert("No hay registros para la fecha especificada.");
@@ -229,7 +230,8 @@ diario.addEventListener('click', async () => {
 });
 
 semanal.addEventListener('click', async () => {
-	info.innerHTML = '';
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
 	dataDownload = [];
 	const fechaValue = document.querySelector('#fecha').value;
 	if (!fechaValue){
@@ -293,8 +295,8 @@ semanal.addEventListener('click', async () => {
 		const msg = document.createElement('p');
 		msg.style.whiteSpace = 'pre-wrap';
 		msg.textContent = `Se encontraron ${counterPeople} usuarios.\n${counterRegister} registros están listos para descargar.`;
+		info.innerHTML = '';
 		info.appendChild(msg);
-		info.style.display = 'flex';
 		downloadBTN.style.display = 'block';
 	} catch (error){
 		console.log(`Error: ${error}`);
@@ -346,7 +348,8 @@ document.getElementById('registros').addEventListener('click', async () => {
 
 document.querySelector('#copia').addEventListener('click', async () => {
 	const fechaValue = document.querySelector('#fecha').value;
-	info.innerHTML = '';
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
 	if (!fechaValue){
 		alert("Debes ingresar una fecha");
 	    return;
@@ -370,25 +373,19 @@ document.querySelector('#copia').addEventListener('click', async () => {
 					let newIngresos = {};
 					let newSalidas = {};
 					let indiceIngresos = 1;
-					let indiceSalidas = 1;
-					if (ingresosDBRefSnap.data().ingresos){
+					if (ingresosDBRefSnap.data().hasOwnProperty('ingresos')){
 						indiceIngresos = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
-						indiceSalidas = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
 					}
 					const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 					const salidas = d.data().salidas || {};
 					Object.keys(ingresos).forEach(key => {
 						newIngresos[`ingreso${indiceIngresos}`] = ingresos[key] ? ingresos[key] : 'N/A';
+						newSalidas[`ingreso${indiceIngresos}`] = salidas[key] ? salidas[key] : 'N/A';
 						indiceIngresos += 1;
 					});
-					Object.keys(salidas).forEach(key => {
-						newSalidas[`ingreso${indiceSalidas}`] = salidas[key] ? salidas[key] : 'N/A';
-						indiceSalidas += 1;
-					});
-					const dataToSend = {
-						ingresos: newIngresos,
-						salidas: newSalidas
-					};
+					const dataToSend = {};
+					if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
+					if (!Object.keys(newSalidas).length == 0){dataToSend['salidas']= newSalidas};
 					await setDoc(ingresosDBRef, dataToSend, {merge:true});
 				} else {
 				    // Crear registro en 'ingresosdb'
@@ -420,20 +417,22 @@ document.querySelector('#copia').addEventListener('click', async () => {
 				const snapNewDocRef = await getDoc(newDocRef);
 				if (snapNewDocRef.exists()){
 					const dataDoc = snapNewDocRef.data();
-					let dataToSend = {
-					    ingresos: {},
-					    salidas: {}
-				    };
-					let indiceIngresos = Object.keys(dataDoc.ingresos).length + 1;
-					let indiceSalidas =  Object.keys(dataDoc.ingresos).length + 1;
-					Object.values(d.data().ingresos).forEach(value => {
-						dataToSend.ingresos[`ingreso${indiceIngresos}`] = value;
-						indiceIngresos += 1;
+					let newIngresos = {};
+					let newSalidas = {};
+					let indice = 1;
+					if (dataDoc.hasOwnProperty('ingresos')){
+					    indice = Object.keys(dataDoc.ingresos).length + 1;
+					}
+					const ingresos = d.data().ingresos || {};
+					const salidas = d.data().salidas || {};
+					Object.keys(ingresos).forEach(key => {
+						newIngresos[`ingreso${indice}`] = ingresos[key] ? ingresos[key] : 'N/A';
+						newSalidas[`ingreso${indice}`] = salidas[key] ? salidas[key] : 'N/A';
+						indice += 1;
 					});
-					Object.values(d.data().salidas).forEach(value => {
-						dataToSend.salidas[`ingreso${indiceSalidas}`] = value;
-						indiceSalidas += 1;
-					});
+					let dataToSend = {};
+					if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
+					if (!Object.keys(newSalidas).length == 0){dataToSend['salidas'] = newSalidas};
 					await setDoc(newDocRef, dataToSend, { merge: true });
 				} else {
 					const newDataToSend = {
@@ -463,8 +462,8 @@ document.querySelector('#copia').addEventListener('click', async () => {
 		console.log(`Error: ${error}`);
 		alert("Error en copia de seguridad.");
 	}
+	info.innerHTML = '';
 	info.appendChild(texto);
-	info.style.display = 'flex';
 });
 
 document.getElementById('backMenu').addEventListener('click', function(){

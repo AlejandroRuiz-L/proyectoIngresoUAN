@@ -69,12 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docRef = doc(db, 'ingresostemporal', String(docId));
 			const docSnap = await getDoc(docRef);
 			let indice = 'ingreso1';
-			if (docSnap.exists()){
+			let dataToSend = {};
+			if (docSnap.exists() && docSnap.data().hasOwnProperty('ingresos')){
 				indice = `ingreso${Object.keys(docSnap.data().ingresos).length + 1}`;
 			};
-			let dataToSend = {
-				ingresos:{[indice]: serverTimestamp()}
-			};
+			dataToSend['ingresos'] = {[indice]: serverTimestamp()};
 			await setDoc(docRef, dataToSend, {merge:true});
 			//maneja la obtención de un serverTimestamp
 			const dateDocRef = doc(db, 'hora', 'actual');
@@ -105,13 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docId = document.querySelector('#docId').value.trim();
             const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
+			let dataToSend = {};
 			const docRefSnap = await getDoc(docRef);
-			if (docRefSnap.exists()){
+			if (docRefSnap.exists() && docRefSnap.data().hasOwnProperty('ingresos')){
 				indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
+			} else {
+				dataToSend['ingresos'] = {};
 			}
-			let dataToSend = {
-			    salidas:{[indice]:serverTimestamp()}
-			};
+			dataToSend['salidas'] = {[indice]:serverTimestamp()};
 			await setDoc(docRef, dataToSend, {merge:true});
 			//maneja la obtención de un serverTimestamp
 			const dateDocRef = doc(db, 'hora', 'actual');
