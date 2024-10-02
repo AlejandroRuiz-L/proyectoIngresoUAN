@@ -7,7 +7,7 @@
 body{
 	background: #014886;
 	text-align: center;
-	margin-top: 40px;
+	margin-top: 90px;
 	margin-bottom: 40px;
 	font-size: 1.3rem;
 	color: white;
@@ -43,9 +43,8 @@ body{
 .logo{
 	width: 240px;
 	display: block;
-	margin: 0 auto;
+	margin: 20px auto;
 	transition: .7s;
-	border-radius: 100px;
 }
 
 .logo:hover{
@@ -54,7 +53,6 @@ body{
 
 .QR{
 	border-radius: 0px;
-	margin-top: 45px;
 }
 
 .logoQR{
@@ -103,7 +101,7 @@ body{
 	width: 85%;
 	gap: 30px;
 	text-align: center;
-	padding: 20px 20px;
+	padding: 15px 7px;
 	font-size: 1.3rem;
 	font-weight: bold;
 	margin: 50px auto;
@@ -158,27 +156,6 @@ body{
 	display: none;
 }
 
-/*
-.animate {
-            width: 100px;
-            height: 100px;
-            background-color: #8a6225;
-            margin: 50px auto;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-150px);
-            }
-            60% {
-                transform: translateY(-75px);
-            }
-        }
-*/
 @media (max-width: 770px){
 	.logo{
 		width: 190px;
@@ -228,5 +205,9 @@ body{
 @media (max-width: 500px){
 	.minionFondo{
 			display: block;
-		}
+	}
+	
+	.input{
+		width: 100%;
+	}
 }

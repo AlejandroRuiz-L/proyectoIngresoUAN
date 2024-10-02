@@ -306,7 +306,8 @@ semanal.addEventListener('click', async () => {
 
 document.getElementById('registros').addEventListener('click', async () => {
 	try {
-		info.innerHTML = '';
+		info.innerHTML = 'Cargando...';
+		info.style.display = 'flex';
 		dataDownload = [];
 		const docsRef = collection(db, 'ingresosdb');
 		const docSnap = await getDocs(docsRef);
@@ -336,8 +337,8 @@ document.getElementById('registros').addEventListener('click', async () => {
 		const msg = document.createElement('p');
 		msg.style.whiteSpace = 'pre-wrap';
 		msg.textContent = `Se encontraron ${docSnap.size} usuarios.\n${counter} registros están listos para descargar.`;
+		info.innerHTML = '';
 		info.appendChild(msg);
-		info.style.display = 'flex';
 		downloadBTN.style.display = 'block';
 		
 	} catch (error) {
