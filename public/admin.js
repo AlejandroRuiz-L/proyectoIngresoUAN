@@ -103,7 +103,7 @@ document.getElementById('logout').addEventListener('click', async () => {
 });
 
 //manejo de evento clik de los botones
-/*document.getElementById('buscar').addEventListener('click', async () => {
+document.getElementById('buscar').addEventListener('click', async () => {
 	info.innerHTML = '';
 	dataDownload = [];
 	const docId = document.querySelector('#docId').value.trim();
@@ -112,7 +112,7 @@ document.getElementById('logout').addEventListener('click', async () => {
 		return;
 	}
 	try {
-		const docRef = doc(db, 'ingresosdb', docId);
+		const docRef = doc(db, 'ingresosdb', String(docId));
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
 			const data = docSnap.data();
@@ -172,7 +172,7 @@ document.getElementById('logout').addEventListener('click', async () => {
 		console.log(`Error: ${error}`);
 		alert("Error al consultar el documento");
 	}
-});*/
+});
 
 diario.addEventListener('click', async () => {
 	info.innerHTML = 'Cargando...';

@@ -22,7 +22,7 @@ body{
 	display: flex;
 	flex-direction: column;
 	gap: 40px;
-	margin: 40px auto;
+	margin: 20px auto;
 	width: 90%;
 }
 
@@ -71,6 +71,7 @@ body{
 	box-shadow: 4px 4px 4px;
 	transition: .7s;
 	font-size: 1.3rem;
+	font-weight: bold;
 }
 
 .boton:hover{
@@ -99,12 +100,12 @@ body{
 	border: 4px solid #997b21;
 	border-radius: 20px;
 	width: 85%;
-	gap: 30px;
+	gap: 20px;
 	text-align: center;
 	padding: 15px 7px;
 	font-size: 1.3rem;
 	font-weight: bold;
-	margin: 50px auto;
+	margin: 20px auto;
 }
 
 .lista{
@@ -209,5 +210,9 @@ body{
 	
 	.input{
 		width: 100%;
+	}
+	
+	body{
+		margin-top: 40px;
 	}
 }
