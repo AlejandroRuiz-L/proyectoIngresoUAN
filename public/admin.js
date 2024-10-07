@@ -71,6 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			await signInWithEmailAndPassword(auth, email, passwordUser);
 			mostrarMenu();
 			adminForm.reset();
+			document.querySelector('#logoUAN').style.display = 'none';
+			document.querySelector('#titulo').style.display = 'none';
+			document.querySelector('#advertencia').style.display = 'block';
 			logout.style.display = 'block';
 		} catch (error) {
 			if (error.code === "auth/invalid-login-credentials"){
@@ -95,8 +98,10 @@ document.getElementById('logout').addEventListener('click', async () => {
         await signOut(auth);
 		localStorage.clear();
 		ocultarMenu();
+		document.querySelector('#logoUAN').style.display = 'block';
+		document.querySelector('#titulo').style.display = 'block';
+		document.querySelector('#advertencia').style.display = 'none';
 		logout.style.display = 'none';
-		console.log('El usuario ha cerrado sesión');
     } catch (error) {
         console.error('Error al cerrar sesión:', error.message);
     }
@@ -152,6 +157,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 			});
 			const msg = document.createElement('p');
 			msg.textContent = `${counter} registros están listos para descargar.`;
+			info.innerHTML = '';
 			info.appendChild(texto);
 			info.appendChild(editBtn);
 			info.appendChild(msg);
@@ -349,12 +355,13 @@ document.getElementById('registros').addEventListener('click', async () => {
 
 document.querySelector('#copia').addEventListener('click', async () => {
 	const fechaValue = document.querySelector('#fecha').value;
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
 	if (!fechaValue){
 		alert("Debes ingresar una fecha");
 	    return;
 	};
+	downloadBTN.style.display = 'none';
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
 	const fechaSplit = fechaValue.split(/[\/\-\\]+/);
 	let year = fechaSplit[0];
 	let month = fechaSplit[1];
