@@ -104,13 +104,14 @@ document.getElementById('logout').addEventListener('click', async () => {
 
 //manejo de evento clik de los botones
 document.getElementById('buscar').addEventListener('click', async () => {
-	info.innerHTML = '';
-	dataDownload = [];
 	const docId = document.querySelector('#docId').value.trim();
 	if (!docId) {
 		alert("Debes ingresar un número de documento.");
 		return;
 	}
+	info.style.display = 'flex';
+	info.innerHTML = 'Cargando...';
+	dataDownload = [];
 	try {
 		const docRef = doc(db, 'ingresosdb', String(docId));
 		const docSnap = await getDoc(docRef);
@@ -154,7 +155,6 @@ document.getElementById('buscar').addEventListener('click', async () => {
 			info.appendChild(texto);
 			info.appendChild(editBtn);
 			info.appendChild(msg);
-			info.style.display = 'flex';
 			downloadBTN.style.display = 'block';
 			document.querySelector('#editar').addEventListener('click', function(){
 				localStorage.setItem('p1', _id);
@@ -175,14 +175,14 @@ document.getElementById('buscar').addEventListener('click', async () => {
 });
 
 diario.addEventListener('click', async () => {
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
-	dataDownload = [];
 	const fecha = document.querySelector('#fecha').value;
 	if (!fecha){
 		alert("Debes ingresar una fecha.");
 		return;
 	};
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
+	dataDownload = [];
 	const fechaSplit = fecha.split(/[\/\-\\]+/);
 	const year = fechaSplit[0];
 	const month = fechaSplit[1];
@@ -230,14 +230,14 @@ diario.addEventListener('click', async () => {
 });
 
 semanal.addEventListener('click', async () => {
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
-	dataDownload = [];
 	const fechaValue = document.querySelector('#fecha').value;
 	if (!fechaValue){
 		alert("Debes seleccionar una fecha.");
 		return;
 	};
+	info.innerHTML = 'Cargando...';
+	info.style.display = 'flex';
+	dataDownload = [];
 	const fechaSplit = fechaValue.split(/[\/\-\\]+/);
 	let year = fechaSplit[0];
 	let month = fechaSplit[1];

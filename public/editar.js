@@ -80,8 +80,8 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	};
 	try {
 		//consulta en 'temporal'
-		const docRefTemporal = doc(db, 'ingresosdb', String(userId));
-		const docSnap = await getDoc(docRefTemporal);
+		const docRefDB = doc(db, 'ingresosdb', String(userId));
+		const docSnap = await getDoc(docRefDB);
 		//consulta en 'coleccion fechas'
 		const fechaSplit = fecha.split(/[\/\-\\]+/);
 		const year = fechaSplit[0];
@@ -90,18 +90,18 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 		const monthDocRef = doc(db, 'a'+String(year)+'db', String(month));
 		const dayCollectionRef = collection(monthDocRef, String(day));
 		const docRef = doc(dayCollectionRef, String(userId));
-		//const docSnapFecha = await getDoc(docRef);//comentada para reducir lecturas
+	    const docSnapFecha = await getDoc(docRef);
 		if (docSnap.exists()){//solo se conprueba la existencia en db principal
 			const docData = docSnap.data();
-			const docDataFecha = docRef.data();
+			const docDataFecha = docSnapFecha.data();
 			if (id){
-				const newDocRefTemporal = doc(db, 'ingresostemporal', String(id));
-				const newDocSnap = await getDoc(newDocRefTemporal);
+				const newDocRefDB = doc(db, 'ingresosdb', String(id));
+				const newDocSnap = await getDoc(newDocRefDB);
 				if (!newDocSnap.exists()){
 					//actualizacion de datos en 'temporal'
-					await setDoc(newDocRefTemporal, docData, {merge:true});
-					await setDoc(newDocRefTemporal, privateData, {merge:true});
-					await deleteDoc(docRefTemporal);
+					await setDoc(newDocRefDB, docData, {merge:true});
+					await setDoc(newDocRefDB, privateData, {merge:true});
+					await deleteDoc(docRefDB);
 					//actualizacion en 'publico'
 					let oldData = {
 						nombre: userName,
@@ -118,7 +118,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 					alert("El número de documento ya está en uso.");
 				}
 			} else {
-				await setDoc(docRefTemporal, privateData, {merge:true});
+				await setDoc(docRefDB, privateData, {merge:true});
 				if (Object.keys(publicData).length > 0){
 					await setDoc(doc(db, 'ingresos', String(userId)), publicData, {merge:true});
 				};
