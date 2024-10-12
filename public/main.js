@@ -16,7 +16,7 @@ const formatDate = (date) => {
 
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formIngreso');
-
+    const loading = document.querySelector('#loadingOverlay');
 	form.addEventListener('submit', async (event) => {
 	    event.preventDefault(); // Evita que el formulario se envíe de manera predeterminada
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				alert("El correo no es válido.");
 				return;
 			}
-
+			loading.style.display = 'block';
 			try {
 				// Envía los datos a Firestore
 				const docRef = doc(db, 'ingresos', String(numId));
@@ -95,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			} catch (error) {
 				console.error('Error al enviar datos:', error);
 				alert('Error al registrar los datos de ingreso');
+			} finally{
+				loading.style.display = 'none';
 			}
 	});
 });

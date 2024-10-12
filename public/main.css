@@ -41,7 +41,7 @@ body{
 }
 
 .logo{
-	width: 240px;
+	width: 400px;
 	display: block;
 	margin: 20px auto;
 	transition: .7s;
@@ -74,11 +74,11 @@ body{
 	font-weight: bold;
 }
 
-.boton:hover{
+/*.boton:hover{
 	transform: scale(1.1);
 	background: linear-gradient(10deg, #dfbd59, #8a6225);
 	box-shadow: 6px 6px 6px;
-}
+}*/
 
 .botonAdmin{
 	width: 50px;
@@ -157,9 +157,23 @@ body{
 	display: none;
 }
 
+#loadingOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 90%);
+    color: white;
+    text-align: center;
+    padding-top: 20%;
+    font-size: 24px;
+}
+
 @media (max-width: 770px){
 	.logo{
-		width: 190px;
+		width: 300px;
 	}
 	
 	.QR{

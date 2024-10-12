@@ -18,6 +18,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
+const loading = document.querySelector('#loadingOverlay');
 const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
 const diario = document.querySelector('#diario');
@@ -114,6 +115,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 		alert("Debes ingresar un número de documento.");
 		return;
 	}
+	loading.style.display = 'block';
 	info.style.display = 'flex';
 	info.innerHTML = 'Cargando...';
 	dataDownload = [];
@@ -177,6 +179,8 @@ document.getElementById('buscar').addEventListener('click', async () => {
 	} catch (error) {
 		console.log(`Error: ${error}`);
 		alert("Error al consultar el documento");
+	} finally{
+		loading.style.display = 'none';
 	}
 });
 
@@ -186,6 +190,7 @@ diario.addEventListener('click', async () => {
 		alert("Debes ingresar una fecha.");
 		return;
 	};
+	loading.style.display = 'block';
 	info.innerHTML = 'Cargando...';
 	info.style.display = 'flex';
 	dataDownload = [];
@@ -232,6 +237,8 @@ diario.addEventListener('click', async () => {
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Ocurrió un error al consultar los registros.");
+	} finally{
+		loading.style.display = 'none';
 	}
 });
 
@@ -241,6 +248,7 @@ semanal.addEventListener('click', async () => {
 		alert("Debes seleccionar una fecha.");
 		return;
 	};
+	loading.style.display = 'block';
 	info.innerHTML = 'Cargando...';
 	info.style.display = 'flex';
 	dataDownload = [];
@@ -307,10 +315,13 @@ semanal.addEventListener('click', async () => {
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Ocurrió un error al consultar los registros.");
+	} finally{
+		loading.style.display = 'none';
 	}
 });
 
 document.getElementById('registros').addEventListener('click', async () => {
+	loading.style.display = 'block';
 	try {
 		info.innerHTML = 'Cargando...';
 		info.style.display = 'flex';
@@ -350,6 +361,8 @@ document.getElementById('registros').addEventListener('click', async () => {
 	} catch (error) {
 		console.log(`Error: ${error}`);
 		alert("Error al consultar los registros.");
+	} finally{
+		loading.style.display = 'none';
 	}
 });
 
@@ -359,6 +372,7 @@ document.querySelector('#copia').addEventListener('click', async () => {
 		alert("Debes ingresar una fecha");
 	    return;
 	};
+	loading.style.display = 'block';
 	downloadBTN.style.display = 'none';
 	info.innerHTML = 'Cargando...';
 	info.style.display = 'flex';
@@ -375,7 +389,7 @@ document.querySelector('#copia').addEventListener('click', async () => {
 			const users = snapIngresos.size;
 			const promises1 = snapIngresos.docs.map(async (d) => {
 				const docId = d.id;
-				const ingresosDBRef = doc(db, 'ingresosdb', docId);
+				const ingresosDBRef = doc(db, 'ingresosdb', String(docId));
 				const ingresosDBRefSnap = await getDoc(ingresosDBRef);
 				if (ingresosDBRefSnap.exists()){
 					let newIngresos = {};
@@ -387,8 +401,8 @@ document.querySelector('#copia').addEventListener('click', async () => {
 					const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 					const salidas = d.data().salidas || {};
 					Object.keys(ingresos).forEach(key => {
-						newIngresos[`ingreso${indiceIngresos}`] = ingresos[key] ? ingresos[key] : 'N/A';
-						newSalidas[`ingreso${indiceIngresos}`] = salidas[key] ? salidas[key] : 'N/A';
+						newIngresos[`ingreso${indiceIngresos}`] = ingresos[`${key}`] ? ingresos[`${key}`] : 'N/A';
+						newSalidas[`ingreso${indiceIngresos}`] = salidas[`${key}`] ? salidas[`${key}`] : 'N/A';
 						indiceIngresos += 1;
 					});
 					const dataToSend = {};
@@ -400,7 +414,7 @@ document.querySelector('#copia').addEventListener('click', async () => {
 				    await setDoc(ingresosDBRef, d.data(), {merge:true});
 				}
 				// Eliminar el documento de 'ingresostemporal'
-				const ingresosTemporalRef = doc(ingresosRef, docId);
+				const ingresosTemporalRef = doc(ingresosRef, String(docId));
 				await deleteDoc(ingresosTemporalRef);
 			});
 			// Espera a que todas las promesas se completen
@@ -469,6 +483,8 @@ document.querySelector('#copia').addEventListener('click', async () => {
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Error en copia de seguridad.");
+	} finally{
+		loading.style.display = 'none';
 	}
 	info.innerHTML = '';
 	info.appendChild(texto);
