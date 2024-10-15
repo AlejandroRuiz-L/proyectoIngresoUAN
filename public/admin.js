@@ -16,6 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
 const loading = document.querySelector('#loadingOverlay');
@@ -26,6 +27,7 @@ const semanal = document.querySelector('#semanal');
 const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "CORREO", "TELEFONO", "TIPO DE VISITANTE", "INGRESO", "SALIDA"];
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
+
 const formatDate = (date) => {
 				if (!date || date == 'N/A') return 'N/A';
 				const options = {
@@ -39,6 +41,7 @@ const formatDate = (date) => {
 				};
 				return date.toDate().toLocaleString('es-CO', options).replace(',', '');
     };
+	
 function esFechaValida(year, month, day) {
 				const fechaObjeto = new Date(year, month - 1, day);
 				return (

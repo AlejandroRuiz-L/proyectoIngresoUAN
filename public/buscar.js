@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		event.preventDefault();
 		const docId = document.querySelector('#docId').value.trim();
 
-		if (!docId) {
-			alert("Debes ingresar tu número de documento");
+		if (!docId || !/^\d+$/.test(docId)) {
+			alert("Debes ingresar un número de documento válido.");
 			return;
 		}
 		loading.style.display = 'block';
