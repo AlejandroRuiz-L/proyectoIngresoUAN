@@ -1,18 +1,5 @@
 import {db, doc, getDoc, serverTimestamp, setDoc, collection} from './configDB.js';
-
-const formatDate = (date) => {
-				if (!date) return 'N/A';
-				const options = {
-					day: '2-digit',
-					month: '2-digit',
-					year: 'numeric',
-					hour: '2-digit',
-					minute: '2-digit',
-					second: '2-digit',
-					hour12: false // Formato 24 horas
-				};
-				return `${date.toDate().toLocaleString('es-CO', options).replace(',', '')}`;
-    };
+import { formatDate } from './functionsDate.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formIngreso');
@@ -24,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			const name = document.querySelector('#nombre').value.trim();
 			const typeId = document.querySelector('#tipoId').value;
 			const numId = document.querySelector('#identificacion').value.trim();
-			const email = document.querySelector('#correo').value.trim();
 			const tel  = document.querySelector('#telefono').value.trim();
 			const typeVisitor = document.querySelector('#visitante').value;
 			
@@ -42,11 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				alert("El teléfono no es válido.");
 				return;
 			}
-			
-			if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)){
-				alert("El correo no es válido.");
-				return;
-			}
 			loading.style.display = 'block';
 			try {
 				// Envía los datos a Firestore
@@ -61,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				    nombre: name,
 				    documento: typeId,
 				    identificacion: numId,
-				    correo: email ? email : 'N/A',
 				    telefono: tel ? tel : 'N/A',
 				    visitante: typeVisitor ? typeVisitor : 'N/A',
 				    ingresos: {ingreso1: serverTimestamp()}
