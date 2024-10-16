@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							indiceIngresos = Object.keys(dataDoc.ingresos).length + 1;
 						}
 						if (dataDoc.hasOwnProperty('salidas')){
-							indiceSalidas = Object.keys(dataDoc.ingresos).length + 1;
+							indiceSalidas = Object.keys(dataDoc.salidas).length + 1;
 						}
 						const ingresos = d.data().ingresos || {};
 						const salidas = d.data().salidas || {};

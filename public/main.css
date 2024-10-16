@@ -56,13 +56,8 @@ body{
 	transform: scale(1.1);
 }
 
-.QR{
-	border-radius: 0px;
-}
-
 .logoQR{
 	width: 50px;
-	border-radius: 0px;
 }
 
 .boton{
@@ -79,11 +74,10 @@ body{
 	font-weight: bold;
 }
 
-/*.boton:hover{
-	transform: scale(1.1);
+.boton:hover{
 	background: linear-gradient(10deg, #dfbd59, #8a6225);
 	box-shadow: 6px 6px 6px;
-}*/
+}
 
 .botonAdmin{
 	width: 50px;
@@ -181,10 +175,11 @@ body{
 		width: 300px;
 	}
 	
-	.QR{
-	    border-radius: 0px;
+	.logoBienvenida{
+	    width: 400px;
+	    padding-left: 22px;
     }
-
+	
     .logoQR{
 	    width: 50px;
 	    border-radius: 0px;
@@ -231,7 +226,24 @@ body{
 		width: 100%;
 	}
 	
+	.titulo{
+		font-size: 2.1rem;
+	}
+	
+	.logo{
+		width: 200px;
+	}
+	
 	body{
 		margin-top: 40px;
 	}
+	
+	.logoQR{
+		width: 50px;
+	}
+	
+	.logoBienvenida{
+	    width: 350px;
+	    padding-left: 22px;
+    }
 }

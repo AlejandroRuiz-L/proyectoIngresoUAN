@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					//crea el registro diario temporal en base al serverTimestamp
 					const monthTemporalRef = doc(db, 'a'+String(year)+'temporal', String(month));
 					const temporalYear = doc(collection(monthTemporalRef, String(day)), String(numId));
-					await setDoc(temporalYear, {ingresos: {ingreso1: serverTimestamp()}, salidas: {}}, {merge:true});
+					await setDoc(temporalYear, {ingresos: {ingreso1: serverTimestamp()}}, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
 					window.location.href= "index.html";
 				}

@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
 			const docRefSnap = await getDoc(docRef);
-			if (docRefSnap.exists() && docRefSnap.data().hasOwnProperty('ingresos')){
-				indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
+			if (docRefSnap.exists() && docRefSnap.data().hasOwnProperty('salidas')){
+				indice = `ingreso${Object.keys(docRefSnap.data().salidas).length}`;
 			}
 			const dataToSend = {
 				salidas: {[indice]:serverTimestamp()}
