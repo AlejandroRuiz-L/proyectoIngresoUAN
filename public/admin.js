@@ -83,16 +83,28 @@ document.addEventListener('DOMContentLoaded', () => {
 						let newIngresos = {};
 						let newSalidas = {};
 						let indiceIngresos = 1;
-						if (ingresosDBRefSnap.data().hasOwnProperty('ingresos')){
-							indiceIngresos = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
+						let indiceSalidas = 1;
+						const dataDB = ingresosDBRefSnap.data();
+						if (dataDB.hasOwnProperty('ingresos')){
+							indiceIngresos = Object.keys(dataDB.ingresos).length + 1;
+						}
+						if (dataDB.hasOwnProperty('salidas')){
+							indiceSalidas = Object.keys(dataDB.salidas).length + 1;
 						}
 						const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 						const salidas = d.data().salidas || {};
-						Object.keys(ingresos).forEach(key => {
-							newIngresos[`ingreso${indiceIngresos}`] = ingresos[`${key}`] ? ingresos[`${key}`] : 'N/A';
-							newSalidas[`ingreso${indiceIngresos}`] = salidas[`${key}`] ? salidas[`${key}`] : 'N/A';
-							indiceIngresos += 1;
-						});
+						if (Object.keys(ingresos).length > 0){
+							Object.keys(ingresos).forEach(key => {
+								newIngresos[`ingreso${indiceIngresos}`] = ingresos[`${key}`] ? ingresos[`${key}`] : 'N/A';
+								indiceIngresos += 1;
+							});
+						}
+						if (Object.keys(salidas).length > 0) {
+							Object.keys(salidas).forEach(key => {
+								newSalidas[`ingreso${indiceSalidas}`] = salidas[`${key}`] ? salidas[`${key}`] : 'N/A';
+								indiceSalidas += 1;
+							});
+						}
 						const dataToSend = {};
 						if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
 						if (!Object.keys(newSalidas).length == 0){dataToSend['salidas']= newSalidas};
@@ -129,17 +141,28 @@ document.addEventListener('DOMContentLoaded', () => {
 						const dataDoc = snapNewDocRef.data();
 						let newIngresos = {};
 						let newSalidas = {};
-						let indice = 1;
+						let indiceIngresos = 1;
+						let indiceSalidas = 1;
 						if (dataDoc.hasOwnProperty('ingresos')){
-							indice = Object.keys(dataDoc.ingresos).length + 1;
+							indiceIngresos = Object.keys(dataDoc.ingresos).length + 1;
+						}
+						if (dataDoc.hasOwnProperty('salidas')){
+							indiceSalidas = Object.keys(dataDoc.ingresos).length + 1;
 						}
 						const ingresos = d.data().ingresos || {};
 						const salidas = d.data().salidas || {};
-						Object.keys(ingresos).forEach(key => {
-							newIngresos[`ingreso${indice}`] = ingresos[key] ? ingresos[key] : 'N/A';
-							newSalidas[`ingreso${indice}`] = salidas[key] ? salidas[key] : 'N/A';
-							indice += 1;
-						});
+						if (Object.keys(ingresos).length > 0){
+							Object.keys(ingresos).forEach(key => {
+								newIngresos[`ingreso${indiceIngresos}`] = ingresos[key] ? ingresos[key] : 'N/A';
+								indiceIngresos += 1;
+							});
+						}
+						if (Object.keys(salidas).length > 0){
+							Object.keys(salidas).forEach(key => {
+    							newSalidas[`ingreso${indiceSalidas}`] = salidas[key] ? salidas[key] : 'N/A';
+								indiceSalidas += 1;
+							});
+						}
 						let dataToSend = {};
 						if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
 						if (!Object.keys(newSalidas).length == 0){dataToSend['salidas'] = newSalidas};
@@ -325,6 +348,7 @@ diario.addEventListener('click', async () => {
 			info.innerHTML = '';
 			info.appendChild(msg);
 			downloadBTN.style.display = 'block';
+			console.log(dataDownload);
 		} else {
 			alert("No hay registros para la fecha especificada.");
 			return;
@@ -415,7 +439,7 @@ semanal.addEventListener('click', async () => {
 	}
 });
 
-document.getElementById('registros').addEventListener('click', async () => {
+/*document.getElementById('registros').addEventListener('click', async () => {
 	loading.style.display = 'block';
 	try {
 		info.innerHTML = 'Cargando...';
@@ -459,130 +483,7 @@ document.getElementById('registros').addEventListener('click', async () => {
 	} finally{
 		loading.style.display = 'none';
 	}
-});
-
-document.querySelector('#copia').addEventListener('click', async () => {
-	downloadBTN.style.display = 'none';
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
-	const dateDocRef = doc(db, 'hora', 'actual');
-	await setDoc(dateDocRef, {horaActual: serverTimestamp()});
-	const time = await getDoc(dateDocRef);
-	const dataTime = time.data().horaActual;
-	const fecha = formatDate(dataTime);
-	const fechaSplit = fecha.split(/[\/\-\\]+/);
-	let year = fechaSplit[0];
-	let month = fechaSplit[1];
-	let day = fechaSplit[2];
-	let texto = document.createElement('p');
-	texto.style.whiteSpace = 'pre-wrap';
-	try {
-		const ingresosRef = collection(db, 'ingresostemporal'); 
-		const snapIngresos = await getDocs(ingresosRef);
-		if (!snapIngresos.empty){
-			const users = snapIngresos.size;
-			const promises1 = snapIngresos.docs.map(async (d) => {
-				const docId = d.id;
-				const ingresosDBRef = doc(db, 'ingresosdb', String(docId));
-				const ingresosDBRefSnap = await getDoc(ingresosDBRef);
-				if (ingresosDBRefSnap.exists()){
-					let newIngresos = {};
-					let newSalidas = {};
-					let indiceIngresos = 1;
-					if (ingresosDBRefSnap.data().hasOwnProperty('ingresos')){
-						indiceIngresos = Object.keys(ingresosDBRefSnap.data().ingresos).length + 1;
-					}
-					const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
-					const salidas = d.data().salidas || {};
-					Object.keys(ingresos).forEach(key => {
-						newIngresos[`ingreso${indiceIngresos}`] = ingresos[`${key}`] ? ingresos[`${key}`] : 'N/A';
-						newSalidas[`ingreso${indiceIngresos}`] = salidas[`${key}`] ? salidas[`${key}`] : 'N/A';
-						indiceIngresos += 1;
-					});
-					const dataToSend = {};
-					if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
-					if (!Object.keys(newSalidas).length == 0){dataToSend['salidas']= newSalidas};
-					await setDoc(ingresosDBRef, dataToSend, {merge:true});
-				} else {
-				    // Crear registro en 'ingresosdb'
-				    await setDoc(ingresosDBRef, d.data(), {merge:true});
-				}
-				// Eliminar el documento de 'ingresostemporal'
-				const ingresosTemporalRef = doc(ingresosRef, String(docId));
-				await deleteDoc(ingresosTemporalRef);
-			});
-			// Espera a que todas las promesas se completen
-			await Promise.all(promises1);
-			texto.textContent = `${users} usuarios actualizados.`;
-		} else {
-			//console.log("La informacion de ingresos está actualizada.");
-		    texto.textContent = 'No se encontraron nuevos datos de usuarios.';
-		}
-		// Copia desde 'temporal -> principal'
-        const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal', String(month), String(day));
-        const snapTemporal = await getDocs(temporalCollectionRef);
-        if (!snapTemporal.empty) {
-			const totalIngresos = snapTemporal.size;
-            const promises = snapTemporal.docs.map(async (d) => {
-                const docId = d.id;
-				const ingresosdbRef = doc(db, 'ingresosdb', String(docId));
-				const snapIngresosdb = await getDoc(ingresosdbRef);
-				const data = snapIngresosdb.data();
-                // Crear referencia al documento en 'a2024db'
-                const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(docId));
-				const snapNewDocRef = await getDoc(newDocRef);
-				if (snapNewDocRef.exists()){
-					const dataDoc = snapNewDocRef.data();
-					let newIngresos = {};
-					let newSalidas = {};
-					let indice = 1;
-					if (dataDoc.hasOwnProperty('ingresos')){
-					    indice = Object.keys(dataDoc.ingresos).length + 1;
-					}
-					const ingresos = d.data().ingresos || {};
-					const salidas = d.data().salidas || {};
-					Object.keys(ingresos).forEach(key => {
-						newIngresos[`ingreso${indice}`] = ingresos[key] ? ingresos[key] : 'N/A';
-						newSalidas[`ingreso${indice}`] = salidas[key] ? salidas[key] : 'N/A';
-						indice += 1;
-					});
-					let dataToSend = {};
-					if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
-					if (!Object.keys(newSalidas).length == 0){dataToSend['salidas'] = newSalidas};
-					await setDoc(newDocRef, dataToSend, { merge: true });
-				} else {
-					const newDataToSend = {
-						nombre: data.nombre,
-						documento: data.documento,
-						identificacion: data.identificacion,
-						correo: data.correo,
-						telefono: data.telefono,
-						visitante: data.visitante,
-						ingresos: d.data().ingresos ? d.data().ingresos : {},
-						salidas: d.data().salidas ? d.data().salidas : {}
-					};
-					await setDoc(newDocRef, newDataToSend, {merge:true});
-				}
-                // Eliminar el documento de la colección temporal
-                const temporalDocRef = doc(temporalCollectionRef, docId);
-                await deleteDoc(temporalDocRef);
-            });
-            // Esperar a que todas las promesas se completen
-            await Promise.all(promises);
-			texto.textContent += `\n${totalIngresos} nuevos ingresos creados.`;
-        } else {
-            //console.log("No hay registros en la colección temporal para copiar.");
-			texto.textContent += '\nNo se encontaron ingresos para esa fecha.';
-        }
-	} catch (error){
-		console.log(`Error: ${error}`);
-		alert("Error en copia de seguridad.");
-	} finally{
-		loading.style.display = 'none';
-	}
-	info.innerHTML = '';
-	info.appendChild(texto);
-});
+});*/
 
 document.getElementById('backMenu').addEventListener('click', function(){
 	info.innerHTML = '';
@@ -592,9 +493,11 @@ document.getElementById('backMenu').addEventListener('click', function(){
 });
 
 downloadBTN.addEventListener('click', function(){
+	loading.style.display = 'block';
 	const ws_data = dataDownload;//filas excel
 	const ws = XLSX.utils.aoa_to_sheet(ws_data);
 	const wb = XLSX.utils.book_new();//libro de trabajo
 	XLSX.utils.book_append_sheet(wb, ws, "Ingresos UAN Sede Bucaramanga");
 	XLSX.writeFile(wb, `Ingresos_UAN_Sede_Bucaramanga_${dataDownload[0]}.xlsx`);
+	loading.style.display = 'none';
 });

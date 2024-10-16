@@ -1,20 +1,7 @@
 import { doc, getDoc, db, serverTimestamp, setDoc, collection} from './configDB.js';
-
+import { formatDate } from './functionsDate.js';
 
 const loading = document.querySelector('#loadingOverlay')
-const formatDate = (date) => {
-				if (!date) return 'N/A';
-				const options = {
-					day: '2-digit',
-					month: '2-digit',
-					year: 'numeric',
-					hour: '2-digit',
-					minute: '2-digit',
-					second: '2-digit',
-					hour12: false // Formato 24 horas
-				};
-				return `${date.toDate().toLocaleString('es-CO', options).replace(',', '')}`;
-    };
 
 document.addEventListener('DOMContentLoaded', () => {
 	const buscarForm = document.querySelector('#buscar-form');
@@ -119,14 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docId = document.querySelector('#docId').value.trim();
             const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
-			let dataToSend = {};
 			const docRefSnap = await getDoc(docRef);
 			if (docRefSnap.exists() && docRefSnap.data().hasOwnProperty('ingresos')){
 				indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
-			} else {
-				dataToSend['ingresos'] = {};
 			}
-			dataToSend['salidas'] = {[indice]:serverTimestamp()};
+			const dataToSend = {
+				salidas: {[indice]:serverTimestamp()}
+			}
 			await setDoc(docRef, dataToSend, {merge:true});
 			//maneja la obtención de un serverTimestamp
 			const dateDocRef = doc(db, 'hora', 'actual');
@@ -144,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		    const monthDocRef = doc(db, 'a'+String(year)+'temporal', String(month));
 			const newTimeDocRef = doc(collection(monthDocRef, String(day)), String(docId));
 			await setDoc(newTimeDocRef, dataToSend, {merge:true});
-			accionCancelar();
 			alert("Se ha creado el registro de salida.");
+			accionCancelar();
 			
 		} catch (error) {
 			console.log(`Error: ${error}`);
