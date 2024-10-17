@@ -21,6 +21,8 @@ const db = getFirestore(app);
 const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
 const loading = document.querySelector('#loadingOverlay');
+loading.innerHTML = 'Bloqueado temporalmente';
+loading.style.display = 'block';
 const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
 const diario = document.querySelector('#diario');
@@ -194,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		    info.innerHTML = '';
     	    info.appendChild(texto);
 		} catch (error) {
+			loading.style.display = 'none';
 			if (error.code === "auth/invalid-login-credentials"){
 				console.log(`Error: ${error}`);
 				alert("Correo o contraseña incorrectos.");

@@ -4,6 +4,8 @@ import { formatDate } from './functionsDate.js';
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formIngreso');
     const loading = document.querySelector('#loadingOverlay');
+	loading.innerHTML = 'Bloqueado temporalmente';
+	loading.style.display = 'block';
 	form.addEventListener('submit', async (event) => {
 	    event.preventDefault(); // Evita que el formulario se envíe de manera predeterminada
 
@@ -66,9 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
 					const month = fechaSplit[1];
 					const day = fechaSplit[0];
 					//crea el registro diario temporal en base al serverTimestamp
-					const monthTemporalRef = doc(db, 'a'+String(year)+'temporal', String(month));
-					const temporalYear = doc(collection(monthTemporalRef, String(day)), String(numId));
-					await setDoc(temporalYear, {ingresos: {ingreso1: serverTimestamp()}}, {merge:true});
+					const temporalYear = doc(db, 'a'+String(year)+'temporal', String(month));
+					await setDoc(temporalYear, {[String(day)]: {[String(numId)]: {ingresos: {ingreso1: serverTimestamp()}}}}, {merge:true});
 					alert('Registro de ingreso creado exitosamente.');
 					window.location.href= "index.html";
 				}

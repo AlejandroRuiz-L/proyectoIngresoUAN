@@ -8,16 +8,16 @@ service cloud.firestore {
     match /a2024db/{month}/{day}/{doc} {
       allow read, write: if request.auth != null && request.auth.uid == '29zF5UA56AO46ooM6KAgRhOP6Vi1';
     }
+    match /a2025db/{month}/{day}/{doc} {
+      allow read, write: if request.auth != null && request.auth.uid == '29zF5UA56AO46ooM6KAgRhOP6Vi1';
+    }
     match /hora/{doc} {
       allow read, write: if true;
     }
-    match /a2024/{month}/{day}/{doc} {
+    match /a2024temporal/{month} {
       allow read, write: if true;
     }
-    match /a2024temporal/{month}/{day} {
-      allow read, write: if true;
-    }
-    match /a2024temporal/{month}/{day}/{doc} {
+    match /a2025temporal/{month} {
       allow read, write: if true;
     }
     match /ingresos {
