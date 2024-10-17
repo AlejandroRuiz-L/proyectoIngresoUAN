@@ -4,8 +4,6 @@ import { formatDate } from './functionsDate.js';
 document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formIngreso');
     const loading = document.querySelector('#loadingOverlay');
-	loading.innerHTML = 'Bloqueado temporalmente';
-	loading.style.display = 'block';
 	form.addEventListener('submit', async (event) => {
 	    event.preventDefault(); // Evita que el formulario se envíe de manera predeterminada
 

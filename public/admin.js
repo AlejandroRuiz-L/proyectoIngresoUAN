@@ -21,13 +21,11 @@ const db = getFirestore(app);
 const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
 const loading = document.querySelector('#loadingOverlay');
-loading.innerHTML = 'Bloqueado temporalmente';
-loading.style.display = 'block';
 const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
 const diario = document.querySelector('#diario');
 const semanal = document.querySelector('#semanal');
-const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "CORREO", "TELEFONO", "TIPO DE VISITANTE", "INGRESO", "SALIDA"];
+const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "TELEFONO", "TIPO DE VISITANTE", "INGRESO", "SALIDA"];
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
 
@@ -89,9 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						const dataDB = ingresosDBRefSnap.data();
 						if (dataDB.hasOwnProperty('ingresos')){
 							indiceIngresos = Object.keys(dataDB.ingresos).length + 1;
-						}
-						if (dataDB.hasOwnProperty('salidas')){
-							indiceSalidas = Object.keys(dataDB.salidas).length + 1;
+							indiceSalidas = Object.keys(dataDB.ingresos).length + 1;
 						}
 						const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
 						const salidas = d.data().salidas || {};
@@ -127,74 +123,83 @@ document.addEventListener('DOMContentLoaded', () => {
 				texto.textContent = 'No se encontraron nuevos datos de usuarios.';
 			}
 			// Copia desde 'temporal -> principal'
-			const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal', String(month), String(day));
-			const snapTemporal = await getDocs(temporalCollectionRef);
-			if (!snapTemporal.empty) {
-				const totalIngresos = snapTemporal.size;
-				const promises = snapTemporal.docs.map(async (d) => {
-					const docId = d.id;
-					const ingresosdbRef = doc(db, 'ingresosdb', String(docId));
-					const snapIngresosdb = await getDoc(ingresosdbRef);
-					const data = snapIngresosdb.data();
-					// Crear referencia al documento en 'a2024db'
-					const newDocRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(docId));
-					const snapNewDocRef = await getDoc(newDocRef);
-					if (snapNewDocRef.exists()){
-						const dataDoc = snapNewDocRef.data();
-						let newIngresos = {};
-						let newSalidas = {};
-						let indiceIngresos = 1;
-						let indiceSalidas = 1;
-						if (dataDoc.hasOwnProperty('ingresos')){
-							indiceIngresos = Object.keys(dataDoc.ingresos).length + 1;
-						}
-						if (dataDoc.hasOwnProperty('salidas')){
-							indiceSalidas = Object.keys(dataDoc.salidas).length + 1;
-						}
-						const ingresos = d.data().ingresos || {};
-						const salidas = d.data().salidas || {};
-						if (Object.keys(ingresos).length > 0){
-							Object.keys(ingresos).forEach(key => {
-								newIngresos[`ingreso${indiceIngresos}`] = ingresos[key] ? ingresos[key] : 'N/A';
-								indiceIngresos += 1;
+			setTimeout(async () => {
+				const temporalCollectionRef = collection(db, 'a'+String(year)+'temporal');
+				const snapTemporal = await getDocs(temporalCollectionRef);
+				if (!snapTemporal.empty) {
+					let totalIngresos = 0;
+					const documents = snapTemporal.docs;
+					const promises = documents.map(m => {
+						const month = m.id;
+						const mData = m.data()
+						Object.keys(mData).forEach(day => {
+							totalIngresos += Object.keys(mData[`${day}`]).length;
+							Object.keys(mData[`${day}`]).forEach(async (id) => {
+								const userRef = doc(db, 'ingresosdb', String(id));
+								const snapUser = await getDoc(userRef);
+								const dataUser = snapUser.data();
+								let dataToSend = {
+									nombre: dataUser.nombre,
+									documento: dataUser.documento,
+									telefono: dataUser.telefono,
+									visitante: dataUser.visitante
+								};
+								const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(id));
+								const snapYear = await getDoc(yearRef);
+								if (snapYear.exists()){
+									const dataYear = snapYear.data();
+									let newIngresos = {};
+									let newSalidas = {};
+									let indiceSalidas = 1;
+									if (mData[`${day}`][`${id}`].hasOwnProperty('ingresos')){
+										let indiceIngresos = Object.keys(dataYear.ingresos).length + 1;
+										indiceSalidas = Object.keys(dataYear.ingresos).length + 1;
+										Object.keys(mData[`${day}`][`${id}`]['ingresos']).forEach(key => {
+											newIngresos[`ingreso${indiceIngresos}`] = mData[`${day}`][`${id}`]['ingresos'][`${key}`];
+											indiceIngresos += 1;
+										});
+									}
+									if (mData[`${day}`][`${id}`].hasOwnProperty('salidas')){
+										Object.keys(mData[`${day}`][`${id}`]['salidas']).forEach(key => {
+											newSalidas[`ingreso${indiceSalidas}`] = mData[`${day}`][`${id}`]['salidas'][`${key}`];
+											indiceSalidas += 1;
+										});
+									}
+									await setDoc(yearRef, dataToSend, {merge:true});
+									if (Object.keys(newIngresos).length > 0){
+										await setDoc(yearRef, {ingresos: newIngresos}, {merge:true});
+									}
+									if (Object.keys(newSalidas).length > 0){
+										await setDoc(yearRef, {salidas: newSalidas}, {merge:true});
+									}
+								} else {
+									await setDoc(yearRef, dataToSend, {merge:true});
+									if (mData[`${day}`][`${id}`].hasOwnProperty('ingresos')){
+										await setDoc(yearRef, {ingresos: mData[`${day}`][`${id}`]['ingresos']}, {merge:true});
+									}
+									if (mData[`${day}`][`${id}`].hasOwnProperty('salidas')){
+										await setDoc(yearRef, {salidas: mData[`${day}`][`${id}`]['salidas']}, {merge:true});
+									}
+								}
 							});
-						}
-						if (Object.keys(salidas).length > 0){
-							Object.keys(salidas).forEach(key => {
-    							newSalidas[`ingreso${indiceSalidas}`] = salidas[key] ? salidas[key] : 'N/A';
-								indiceSalidas += 1;
-							});
-						}
-						let dataToSend = {};
-						if (!Object.keys(newIngresos).length == 0){dataToSend['ingresos'] = newIngresos};
-						if (!Object.keys(newSalidas).length == 0){dataToSend['salidas'] = newSalidas};
-						await setDoc(newDocRef, dataToSend, { merge: true });
-					} else {
-						const newDataToSend = {
-							nombre: data.nombre,
-							documento: data.documento,
-							identificacion: data.identificacion,
-							telefono: data.telefono,
-							visitante: data.visitante,
-							ingresos: d.data().ingresos ? d.data().ingresos : {},
-							salidas: d.data().salidas ? d.data().salidas : {}
-						};
-						await setDoc(newDocRef, newDataToSend, {merge:true});
-					}
-					// Eliminar el documento de la colección temporal
-					const temporalDocRef = doc(temporalCollectionRef, docId);
-					await deleteDoc(temporalDocRef);
-				});
-				// Esperar a que todas las promesas se completen
-				await Promise.all(promises);
-				texto.textContent += `\n${totalIngresos} nuevos ingresos creados.`;
-			} else {
-				//console.log("No hay registros en la colección temporal para copiar.");
-				texto.textContent += '\nNo se encontaron ingresos para esa fecha.';
-			}
-			loading.style.display = 'none';
-		    info.innerHTML = '';
-    	    info.appendChild(texto);
+						});
+					});
+					// Esperar a que todas las promesas se completen
+					await Promise.all(promises);
+					const deleteTemporals = documents.map(async (m) => {
+						const deleteMonthRef = doc(db, 'a'+String(year)+'temporal', String(m.id));
+						await deleteDoc(deleteMonthRef);
+					});
+					await Promise.all(deleteTemporals);
+					texto.textContent += `\n${totalIngresos} nuevos ingresos creados.`;
+				} else {
+					//console.log("No hay registros en la colección temporal para copiar.");
+					texto.textContent += '\nNo se encontaron ingresos para registrar.';
+				}
+				loading.style.display = 'none';
+		        info.innerHTML = '';
+    	        info.appendChild(texto);
+			}, 4000);
 		} catch (error) {
 			loading.style.display = 'none';
 			if (error.code === "auth/invalid-login-credentials"){
@@ -331,11 +336,10 @@ diario.addEventListener('click', async () => {
 			    const salidas = data.salidas || {};
 				Object.keys(ingresos).forEach(key => {
 					let registro = [
-						`${data.identificacion}`, 
-						`${data.documento}`, 
-						`${data.nombre}`, 
-						`${data.correo ? data.correo : 'N/A'}`,
-						`${data.telefono ? data.telefono : 'N/A'}`, 
+						`${d.id}`,
+						`${data.documento}`,
+						`${data.nombre}`,
+						`${data.telefono ? data.telefono : 'N/A'}`,
 						`${data.visitante}`,
 						`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
 						`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
@@ -351,7 +355,6 @@ diario.addEventListener('click', async () => {
 			info.innerHTML = '';
 			info.appendChild(msg);
 			downloadBTN.style.display = 'block';
-			console.log(dataDownload);
 		} else {
 			alert("No hay registros para la fecha especificada.");
 			return;
@@ -406,10 +409,9 @@ semanal.addEventListener('click', async () => {
 					const salidas = data.salidas || {};
 					Object.keys(ingresos).forEach(key => {
 						let registro = [
-							`${data.identificacion}`, 
+							`${d.id}`, 
 							`${data.documento}`, 
 							`${data.nombre}`, 
-							`${data.correo ? data.correo : 'N/A'}`,
 							`${data.telefono ? data.telefono : 'N/A'}`, 
 							`${data.visitante}`,
 							`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
