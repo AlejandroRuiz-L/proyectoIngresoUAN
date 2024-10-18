@@ -29,7 +29,7 @@ body{
 .caja{
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 15px;
 	border-bottom: 4px solid #997b21;
 	padding-bottom: 12px;
 }
@@ -114,7 +114,6 @@ body{
 }
 
 .lista-item{
-	border: 1px solid #8a6225;
 	background: linear-gradient(45deg, #8a6225, #dfbd59);
 	border: 1px solid black;
 	padding: 5px 5px;
@@ -130,7 +129,6 @@ body{
 
 .lista-item:hover{
 	background: linear-gradient(10deg, #8a6225, #dfbd59);
-	transform: scale(1.1);
 }
 
 .input{

@@ -28,7 +28,6 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	const id = document.querySelector('#id').value.trim();
 	const docType = document.querySelector('#doc').value.trim();
 	const name = document.querySelector('#name').value.trim();
-	const email = document.querySelector('#email').value.trim();
 	const tel = document.querySelector('#tel').value.trim();
 	const visit = document.querySelector('#visit').value.trim();
 	const fecha = document.querySelector('#fecha').value;
@@ -39,10 +38,6 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
     };
 	if (id && Number(id) == 0){
 		alert("El número de identificación no es válido.");
-		return;
-	};
-	if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)){
-		alert("El correo no es válido.");
 		return;
 	};
 	if (tel && !/^\d+$/.test(tel)){
@@ -64,9 +59,6 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	if (name){
 		privateData['nombre'] = name;
 		publicData['nombre'] = name;
-	};
-	if (email){
-		privateData['correo'] = email;
 	};
 	if (tel){
 		privateData['telefono'] = tel;

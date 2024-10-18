@@ -1,4 +1,4 @@
-import { doc, getDoc, db, serverTimestamp, setDoc, collection} from './configDB.js';
+import { doc, getDoc, db, serverTimestamp, setDoc} from './configDB.js';
 import { formatDate } from './functionsDate.js';
 
 const loading = document.querySelector('#loadingOverlay')

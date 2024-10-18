@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="LogoInstitucionalUANAzul.png" type="image/png">
+  <title>Registro Ingreso ADMIN</title>
+  <link rel="stylesheet" href="main.css" >
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="caja">
+	<img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+	<h1 class="titulo" id="titulo">Administración de registros <br>Sede Bucaramanga</h1>
+	<h2 class="protected-content titulo" id="tituloIngreso">Ingresos</h2>
+	<h2 class="protected-content titulo" id="tituloRegistro">Formulario de Registro</h2>
+	&#128584;
+  </header>
+  <main class="container">
+    <div id="menu" class="caja">
+	  <button class="boton" id="ingreso">Ingresar</button>
+	  <button class="boton" id="registro">Registrar</button>
+	</div>
+	<button class="protected-content boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	<div id="loadingOverlay">Cargando. Por favor espere...</div>
+	
+	<form class="protected-content form" id="formIngreso">
+	  <label for="userId" class="label">Identificación:</label>
+	  <input type="text" id="userId" class="input" autocomplete="off">
+	  
+	  <button type="submit" class="boton" id="ingresar">Buscar</button>
+	</form>
+	
+	<div class="protected-content form container" id="formIngresoSalida">
+	  <p id="info" class="lista-item"></p>
+	  <div>
+		<label for="dateTime" class="label">Fecha y hora:</label>
+	    <input type="dateTime-local" class="input" id="dateTime">
+	  </div>
+		
+	  <button type="submit" class="boton" id="marcarIngreso">Registrar Ingreso</button>
+	  <button type="submit" class="boton" id="marcarSalida">Registrar Salida</button>
+	</div>
+	
+	<form class="protected-content form container" id="formRegistro">
+	  <div>
+	  <label for="nombre" class="label">Nombre:</label>
+	  <input type="text" id="nombre" class="input" placeholder="Nombre Completo" autocomplete="off" required >
+      </div>
+	  
+	  <div>
+	  <label for="tipoId" class="label">Tipo de documento:</label>
+      <select id="tipoId" class="input">>
+		<option value="C.C">C.C</option>>
+      	<option value="C.E">C.E</option>
+      	<option value="T.I">T.I</option>
+      	<option value="PA">PA</option>
+      	<option value="PEP">PEP</option>
+      </select>
+	  </div>
+	  
+	  <div>
+      <label for="identificacion" class="label">Identificación:</label>
+      <input type="text" id="identificacion" class="input" placeholder="Número de documento" autocomplete="off" required >
+	  </div>
+	  
+	  <div>
+      <label for="telefono" class="label">Teléfono:</label>
+      <input type="text" id="telefono" class="input" autocomplete="off" >
+	  </div>
+	  
+	  <div>
+      <label for="visitante" class="label">Tipo de visitante:</label>
+      <select id="visitante" class="input">
+        <option value="Administrativo">Administrativo</option>
+        <option value="Profesor">Profesor</option>
+        <option value="Estudiante">Estudiante</option>
+        <option value="Visitante">Visitante</option>
+        <option value="Proveedor">Proveedor</option>
+      </select>
+	  </div>
+	  
+	  <button type="submit" id="registrar" class="boton">Registrar</button>
+      <button type="reset" class="boton">Limpiar</button>
+</main>
+<script src="registroAdmin.js" type="module" defer></script>
+</body>
+</html>

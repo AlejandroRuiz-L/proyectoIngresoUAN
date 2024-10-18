@@ -1,3 +1,5 @@
+import { Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
 const formatDate = (date) => {
 				if (!date || date == 'N/A') return 'N/A';
 				const options = {
@@ -21,4 +23,10 @@ function esFechaValida(year, month, day) {
 				);
 			}
 
-export { formatDate, esFechaValida };
+function dateTimeToServerTime(dateTime){
+	const newDateTime = new Date(dateTime);
+	const serverTime = Timestamp.fromDate(newDateTime);
+	return serverTime;
+}
+
+export { formatDate, esFechaValida, dateTimeToServerTime };

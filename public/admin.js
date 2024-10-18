@@ -60,6 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			downloadBTN.style.display = 'none';
 			info.innerHTML = 'Cargando...';
 			info.style.display = 'flex';
+			sessionStorage.setItem('userIngreso', email);
+			sessionStorage.setItem('pwdIngreso', passwordUser);
+			//Se realiza la copia de seguridad luego de iniciar sesion
 			const dateDocRef = doc(db, 'hora', 'actual');
 			await setDoc(dateDocRef, {horaActual: serverTimestamp()});
 			const time = await getDoc(dateDocRef);
@@ -489,6 +492,10 @@ semanal.addEventListener('click', async () => {
 		loading.style.display = 'none';
 	}
 });*/
+
+document.querySelector('#registro').addEventListener('click', () => {
+	window.open("registroAdmin.html", "_blank");
+});
 
 document.getElementById('backMenu').addEventListener('click', function(){
 	info.innerHTML = '';
