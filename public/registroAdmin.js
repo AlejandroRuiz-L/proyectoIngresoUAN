@@ -96,6 +96,13 @@ formIngreso.addEventListener('submit', async (event) => {
 			let texto = document.querySelector('#info');
 			texto.textContent = `${userData.documento}: ${snapUser.id}\n${userData.nombre}`;
 			inOut.style.display = 'flex';
+			let dataToSend = {
+				nombre: userData.nombre,
+				documento: userData.documento,
+				telefono: userData.telefono,
+				visitante: userData.visitante
+			};
+			let indice = 1;
 			document.querySelector('#marcarIngreso').addEventListener('click', async () => {
 				const dateTime = document.querySelector('#dateTime').value;
 				if (!dateTime){
@@ -105,13 +112,64 @@ formIngreso.addEventListener('submit', async (event) => {
 				loading.style.display = 'block';
 				//crear ingreso en 'ingresosdb'
 				if (userData.hasOwnProperty('ingresos')){
-					const indiceIngresos = Object.keys(userData.ingresos).length + 1;
-    				await setDoc(userRef, {ingresos: {[`ingreso${indiceIngresos}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
+					indice = Object.keys(userData.ingresos).length + 1;
+    				await setDoc(userRef, {ingresos: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
 				}
 				//crear ingreso en 'fechadb'
+				indice = 1;
 				const splitDateTime = dateTime.split(/[\/\-\\T]+/);
 				const year = splitDateTime[0];
-				const yearRef = doc(db, 'a'+String(year)+'db');
+				const month = splitDateTime[1];
+				const day = splitDateTime[2];
+				const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(snapUser.id));
+				const snapYear = await getDoc(yearRef);
+				if (snapYear.exists()){
+					const yearData = snapYear.data();
+					if (yearData.hasOwnProperty('ingresos')){
+						indice = Object.keys(yearData.ingresos).length + 1;
+					}
+					dataToSend['ingresos'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
+					await setDoc(yearRef, dataToSend, {merge:true});
+				} else {
+					dataToSend['ingresos'] = {ingreso1: dateTimeToServerTime(dateTime)}
+					await setDoc(yearRef, dataToSend, {merge:true});
+				}
+				alert("Se ha creado el registro de entrada.");
+				loading.style.display = 'none';
+			});
+			
+			document.querySelector('#marcarSalida').addEventListener('click', async () => {
+				const dateTime = document.querySelector('#dateTime').value;
+				if (!dateTime){
+					alert("Debes seleccionar la hora y la fecha.");
+					return;
+				}
+				loading.style.display = 'block';
+				//crear ingreso en 'ingresosdb'
+				if (userData.hasOwnProperty('ingresos')){
+					indice = Object.keys(userData.ingresos).length + 1;
+    				await setDoc(userRef, {salidas: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
+				}
+				//crear ingreso en 'fechadb'
+				indice = 1;
+				const splitDateTime = dateTime.split(/[\/\-\\T]+/);
+				const year = splitDateTime[0];
+				const month = splitDateTime[1];
+				const day = splitDateTime[2];
+				const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(snapUser.id));
+				const snapYear = await getDoc(yearRef);
+				if (snapYear.exists()){
+					const yearData = snapYear.data();
+					if (yearData.hasOwnProperty('ingresos')){
+						indice = Object.keys(yearData.ingresos).length + 1;
+					}
+					dataToSend['salidas'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
+					await setDoc(yearRef, dataToSend, {merge:true});
+				} else {
+					dataToSend['salidas'] = {ingreso1: dateTimeToServerTime(dateTime)}
+					await setDoc(yearRef, dataToSend, {merge:true});
+				}
+				alert("Se ha creado el registro de salida.");
 				loading.style.display = 'none';
 			});
 		} else {
