@@ -109,6 +109,9 @@ formIngreso.addEventListener('submit', async (event) => {
     				await setDoc(userRef, {ingresos: {[`ingreso${indiceIngresos}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
 				}
 				//crear ingreso en 'fechadb'
+				const splitDateTime = dateTime.split(/[\/\-\\T]+/);
+				const year = splitDateTime[0];
+				const yearRef = doc(db, 'a'+String(year)+'db');
 				loading.style.display = 'none';
 			});
 		} else {

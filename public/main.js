@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				let dataToSend = {
 				    nombre: name,
 				    documento: typeId,
-				    identificacion: numId,
 				    telefono: tel ? tel : 'N/A',
 				    visitante: typeVisitor ? typeVisitor : 'N/A',
 				    ingresos: {ingreso1: serverTimestamp()}
