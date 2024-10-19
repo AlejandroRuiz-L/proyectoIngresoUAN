@@ -14,7 +14,6 @@
 	<h1 class="titulo" id="titulo">Administración de registros <br>Sede Bucaramanga</h1>
 	<h2 class="protected-content titulo" id="tituloIngreso">Ingresos</h2>
 	<h2 class="protected-content titulo" id="tituloRegistro">Formulario de Registro</h2>
-	&#128584;
   </header>
   <main class="container">
     <div id="menu" class="caja">
@@ -44,7 +43,7 @@
 	
 	<form class="protected-content form container" id="formRegistro">
 	  <div>
-	  <label for="nombre" class="label">Nombre:</label>
+	  <label for="nombre" class="label">* Nombre:</label>
 	  <input type="text" id="nombre" class="input" placeholder="Nombre Completo" autocomplete="off" required >
       </div>
 	  
@@ -60,7 +59,7 @@
 	  </div>
 	  
 	  <div>
-      <label for="identificacion" class="label">Identificación:</label>
+      <label for="identificacion" class="label">* Identificación:</label>
       <input type="text" id="identificacion" class="input" placeholder="Número de documento" autocomplete="off" required >
 	  </div>
 	  
@@ -80,8 +79,14 @@
       </select>
 	  </div>
 	  
+	  <div>
+	    <label for="fechaIngreso" class="label">* Fecha y hora de ingreso:</label>
+		<input type="dateTime-local" id="fechaIngreso" class="input">
+	  </div>
+	  
 	  <button type="submit" id="registrar" class="boton">Registrar</button>
       <button type="reset" class="boton">Limpiar</button>
+	</form>
 </main>
 <script src="registroAdmin.js" type="module" defer></script>
 </body>

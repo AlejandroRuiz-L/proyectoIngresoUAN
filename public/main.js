@@ -2,9 +2,8 @@ import {db, doc, getDoc, serverTimestamp, setDoc, collection} from './configDB.j
 import { formatDate } from './functionsDate.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-	const form = document.getElementById('formIngreso');
     const loading = document.querySelector('#loadingOverlay');
-	form.addEventListener('submit', async (event) => {
+	document.querySelector('#formIngreso').addEventListener('submit', async (event) => {
 	    event.preventDefault(); // Evita que el formulario se envíe de manera predeterminada
 
 			// Recoge todos los checkboxes seleccionados
@@ -67,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					//crea el registro diario temporal en base al serverTimestamp
 					const temporalYear = doc(db, 'a'+String(year)+'temporal', String(month));
 					await setDoc(temporalYear, {[String(day)]: {[String(numId)]: {ingresos: {ingreso1: serverTimestamp()}}}}, {merge:true});
-					alert('Registro de ingreso creado exitosamente.');
+					alert(`Se registró exitosamente a ${name}.\nSe ha creado el primer ingreso.`);
 					window.location.href= "index.html";
 				}
 			} catch (error) {
