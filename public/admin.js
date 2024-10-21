@@ -87,13 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
 						let newSalidas = {};
 						let indiceIngresos = 1;
 						let indiceSalidas = 1;
+						const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
+						const salidas = d.data().salidas || {};
 						const dataDB = ingresosDBRefSnap.data();
 						if (dataDB.hasOwnProperty('ingresos')){
 							indiceIngresos = Object.keys(dataDB.ingresos).length + 1;
-							indiceSalidas = Object.keys(dataDB.ingresos).length + 1;
+							if (Object.keys(ingresos).length == 0){
+								indiceSalidas = Object.keys(dataDB.ingresos).length;
+							} else {
+								indiceSalidas = Object.keys(dataDB.ingresos).length + 1;
+							}
 						}
-						const ingresos = d.data().ingresos || {};//se debe asegurar siempre la existencia de un diccionario de salidas o entradas
-						const salidas = d.data().salidas || {};
 						if (Object.keys(ingresos).length > 0){
 							Object.keys(ingresos).forEach(key => {
 								newIngresos[`ingreso${indiceIngresos}`] = ingresos[`${key}`] ? ingresos[`${key}`] : 'N/A';
@@ -159,16 +163,19 @@ document.addEventListener('DOMContentLoaded', () => {
 										indiceSalidas = Object.keys(dataYear.ingresos).length + 1;
 										Object.keys(mData[`${day}`][`${id}`]['ingresos']).forEach(key => {
 											newIngresos[`ingreso${indiceIngresos}`] = mData[`${day}`][`${id}`]['ingresos'][`${key}`];
+											newSalidas[`ingreso${indiceIngresos}`] = mData[`${day}`][`${id}`]['salidas'][`${key}`] || 'N/A';
 											indiceIngresos += 1;
 										});
+									} else {
+										indiceSalidas = Object.keys(dataYear.ingresos).length;
+										if (mData[`${day}`][`${id}`].hasOwnProperty('salidas')){
+											Object.keys(mData[`${day}`][`${id}`]['salidas']).forEach(key => {
+												newSalidas[`ingreso${indiceSalidas}`] = mData[`${day}`][`${id}`]['salidas'][`${key}`];
+												indiceSalidas += 1;
+											});
+										}
 									}
-									if (mData[`${day}`][`${id}`].hasOwnProperty('salidas')){
-										Object.keys(mData[`${day}`][`${id}`]['salidas']).forEach(key => {
-											newSalidas[`ingreso${indiceSalidas}`] = mData[`${day}`][`${id}`]['salidas'][`${key}`];
-											indiceSalidas += 1;
-										});
-									}
-									await setDoc(yearRef, dataToSend, {merge:true});
+									//await setDoc(yearRef, dataToSend, {merge:true});
 									if (Object.keys(newIngresos).length > 0){
 										await setDoc(yearRef, {ingresos: newIngresos}, {merge:true});
 									}
@@ -228,6 +235,7 @@ document.getElementById('logout').addEventListener('click', async () => {
     try {
         await signOut(auth);
 		localStorage.clear();
+		sessionStorage.clear();
 		ocultarMenu();
 		document.querySelector('#logoUAN').style.display = 'block';
 		document.querySelector('#titulo').style.display = 'block';

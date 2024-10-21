@@ -19,7 +19,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 try {
-	//signInWithEmailAndPassword(auth, 'ingresouan@gmail.com', 'adminingresoUAN2309');
 	if (sessionStorage.getItem('userIngreso') && sessionStorage.getItem('pwdIngreso')){
 	    signInWithEmailAndPassword(auth, sessionStorage.getItem('userIngreso'), sessionStorage.getItem('pwdIngreso'));
 	} else {
@@ -30,15 +29,12 @@ try {
 	alert("Error durante la ejecución.")
 	console.log(`Error: ${error}`);
 }
-//&#128584;emoji
 const logo = document.querySelector('#logoUAN');
 const title = document.querySelector('#titulo');
 const titleIngreso = document.querySelector('#tituloIngreso');
 const titleRegistro = document.querySelector('#tituloRegistro');
 const menu = document.querySelector('#menu');
 const loading = document.querySelector('#loadingOverlay');
-//loading.innerHTML = 'Bloqueado temporalmente...';
-//loading.style.display = 'block';
 const backMenu = document.querySelector('#backMenu');
 const formIngreso = document.querySelector('#formIngreso');
 const inOut = document.querySelector('#formIngresoSalida');
@@ -84,9 +80,9 @@ document.querySelector('#registro').addEventListener('click', () => {
 	formRegistro.style.display = 'flex';
 });
 
-let userRef;
 let userData;
-let userId;//falta revisar logica y manejo de ingresos(evitar acumulacion de alerts y datos duplicados)
+let userRef;
+let userId;
 
 formIngreso.addEventListener('submit', async (event) => {
 	event.preventDefault();
@@ -103,24 +99,18 @@ formIngreso.addEventListener('submit', async (event) => {
 		
 		if (snapUser.exists()){
 			loading.style.display = 'none';
-			data = snapUser.data();
-			userData = {
-				nombre: data.nombre,
-				documento: data.documento,
-				telefono: data.telefono,
-				visitante: data.visitante
-			};
+			userData = snapUser.data();
+			userId = id;
 			formIngreso.style.display = 'none';
 			let texto = document.querySelector('#info');
 			texto.textContent = `${userData.documento}: ${id}\n${userData.nombre}`;
 			inOut.style.display = 'flex';
 		} else {
-			alert("El usuario no se encuentra registrado.");
-			return;
+			alert("El usuario no se encuentra registrado.");		
 		}
 		loading.style.display = 'none';
 	} catch (error){
-		alert("Ocurrió un error en la ejecución.");
+		alert("Ocurrió un error al buscar el documento.");
 		console.log(`Error: ${error}`);
 	}
 });
@@ -134,31 +124,36 @@ document.querySelector('#marcarIngreso').addEventListener('click', async () => {
 	loading.style.display = 'block';
 	let indice = 1;
 	//crear ingreso en 'ingresosdb'
-	if (userData.hasOwnProperty('ingresos')){
-		indice = Object.keys(userData.ingresos).length + 1;
-		await setDoc(userRef, {ingresos: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
-	}
-	//crear ingreso en 'fechadb'
-	const splitDateTime = dateTime.split(/[\/\-\\T]+/);
-	const year = splitDateTime[0];
-	const month = splitDateTime[1];
-	const day = splitDateTime[2];
-	const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(userId));
-	const snapYear = await getDoc(yearRef);
-	if (snapYear.exists()){
-		const yearData = snapYear.data();
-		if (yearData.hasOwnProperty('ingresos')){
-			indice = Object.keys(yearData.ingresos).length + 1;
+	try {
+		if (userData.hasOwnProperty('ingresos')){
+			indice = Object.keys(userData.ingresos).length + 1;
+			await setDoc(userRef, {ingresos: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
 		}
-		userData['ingresos'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
-		await setDoc(yearRef, userData, {merge:true});
-	} else {
-		userData['ingresos'] = {ingreso1: dateTimeToServerTime(dateTime)}
-		await setDoc(yearRef, userData, {merge:true});
+		//crear ingreso en 'fechadb'
+		const splitDateTime = dateTime.split(/[\/\-\\T]+/);
+		const year = splitDateTime[0];
+		const month = splitDateTime[1];
+		const day = splitDateTime[2];
+		const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(userId));
+		const snapYear = await getDoc(yearRef);
+		if (snapYear.exists()){
+			const yearData = snapYear.data();
+			if (yearData.hasOwnProperty('ingresos')){
+				indice = Object.keys(yearData.ingresos).length + 1;
+			}
+			userData['ingresos'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
+			await setDoc(yearRef, userData, {merge:true});
+		} else {
+			userData['ingresos'] = {ingreso1: dateTimeToServerTime(dateTime)}
+			await setDoc(yearRef, userData, {merge:true});
+		}
+		alert(`Ingreso creado para ${userData.nombre}`);
+		inOutHidden();
+	} catch (error){
+		alert("Error al marcar el ingreso.");
+		console.log(`Error: ${error}`);
 	}
-	alert(`Ingreso creado para ${userData.nombre}`);
 	loading.style.display = 'none';
-	inOutHidden();
 	return;
 });
 
@@ -171,31 +166,37 @@ document.querySelector('#marcarSalida').addEventListener('click', async () => {
 	loading.style.display = 'block';
 	let indice = 1;
 	//crear ingreso en 'ingresosdb'
-	if (userData.hasOwnProperty('ingresos')){
-		indice = Object.keys(userData.ingresos).length;
-		await setDoc(userRef, {salidas: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
-	}
-	//crear ingreso en 'fechadb'
-	const splitDateTime = dateTime.split(/[\/\-\\T]+/);
-	const year = splitDateTime[0];
-	const month = splitDateTime[1];
-	const day = splitDateTime[2];
-	const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(userId));
-	const snapYear = await getDoc(yearRef);
-	if (snapYear.exists()){
-		const yearData = snapYear.data();
-		if (yearData.hasOwnProperty('ingresos')){
-			indice = Object.keys(yearData.ingresos).length;
+	try {
+		if (userData.hasOwnProperty('ingresos')){
+			indice = Object.keys(userData.ingresos).length;
+			await setDoc(userRef, {salidas: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
 		}
-		userData['salidas'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
-		await setDoc(yearRef, userData, {merge:true});
-	} else {
-		userData['salidas'] = {ingreso1: dateTimeToServerTime(dateTime)}
-		await setDoc(yearRef, userData, {merge:true});
+		//crear ingreso en 'fechadb'
+		const splitDateTime = dateTime.split(/[\/\-\\T]+/);
+		const year = splitDateTime[0];
+		const month = splitDateTime[1];
+		const day = splitDateTime[2];
+		const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(userId));
+		const snapYear = await getDoc(yearRef);
+		if (snapYear.exists()){
+			const yearData = snapYear.data();
+			if (yearData.hasOwnProperty('ingresos')){
+				indice = Object.keys(yearData.ingresos).length;
+			}
+			userData['salidas'] = {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)};
+			await setDoc(yearRef, userData, {merge:true});
+		} else {
+			userData['salidas'] = {ingreso1: dateTimeToServerTime(dateTime)}
+			await setDoc(yearRef, userData, {merge:true});
+		}
+		await setDoc(userRef, {salidas: {[`ingreso${indice}`]: dateTimeToServerTime(dateTime)}}, {merge:true});
+		alert(`Salida resgistrada para ${userData.nombre}`);
+		inOutHidden();
+	} catch (error){
+		alert("Error al marcar la salida.");
+		console.log(`Error: ${error}`);
 	}
-	alert(`Salida resgistrada para ${userData.nombre}`);
 	loading.style.display = 'none';
-	inOutHidden();
 	return;
 });
 
@@ -232,7 +233,9 @@ formRegistro.addEventListener('submit', async (event) => {
 				visitante: visitor,
 				ingresos: {ingreso1: dateTimeToServerTime(dateTime)}
 			};
+			const publicRef = doc(db, 'ingresos', String(id));
 			await setDoc(userRef, dataToSend, {merge:true});
+			await setDoc(publicRef, {nombre: name, documento: typeId}, {merge:true});
 			const splitDateTime = dateTime.split(/[\/\-\\T]+/);
 			const year = splitDateTime[0];
 			const month = splitDateTime[1];
@@ -240,12 +243,12 @@ formRegistro.addEventListener('submit', async (event) => {
 			const yearRef = doc(db, 'a'+String(year)+'db', String(month), String(day), String(id));
 			await setDoc(yearRef, dataToSend, {merge:true});
 			alert(`Se registró exitosamente a ${name}.\nSe creó el primer ingreso.`);
-			loading.style.display = 'none';
+			formRegistro.reset();
 		} else {
 			alert("El número de identificación ya se encuentra registrado.");
-			loading.style.display = 'none';
-			return;
 		}
+		loading.style.display = 'none';
+		return;
 	} catch (error){
 		alert("Ocurrió un error durante el registro.");
 		console.log(`Error: ${error}`);

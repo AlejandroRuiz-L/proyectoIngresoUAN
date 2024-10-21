@@ -23,12 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			const docSnap = await getDoc(docRef);
 			if (docSnap.exists()) {
 				const data = docSnap.data();
+				sessionStorage.setItem('visitante', data.nombre);
 				let mensaje = document.createElement('p');
 				mensaje.style.whiteSpace = "pre-wrap";
 				mensaje.style.marginTop = '30px';
 				mensaje.textContent = "Si tus datos son incorrectos presiona 'Cancelar'\nde lo contrario registra tu ingreso o tu salida.";
 				let texto = document.createElement('p');
-				texto.textContent += `${data.documento}: ${data.identificacion}\n${data.nombre}`;
+				texto.textContent += `${data.documento}: ${docId}\n${data.nombre}`;
 				texto.classList.add('lista-item');
 				divInfo.appendChild(texto);
 				divInfo.appendChild(mensaje);
@@ -89,10 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			const yearRef = doc(db, 'a'+String(year)+'temporal', String(month));
 			await setDoc(yearRef, {[String(day)]: {[String(docId)]: dataToSend}}, {merge:true});
 			accionCancelar();
-			alert("Se ha creado el registro de entrada.");
+			alert(`Registro de entrada creado para ${sessionStorage.getItem('visitante')}.`);
 		} catch (error) {
 			console.log(`Error: ${error}`);
-			alert("Error al crear el registro.");
+			alert("Error al registrar la hora de entrada.");
 		} finally {
 			// Ocultar la pantalla de carga
 			loading.style.display = 'none';
@@ -106,8 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const docRef = doc(db, 'ingresostemporal', String(docId));
 			let indice = 'ingreso1';
 			const docRefSnap = await getDoc(docRef);
-			if (docRefSnap.exists() && docRefSnap.data().hasOwnProperty('salidas')){
-				indice = `ingreso${Object.keys(docRefSnap.data().salidas).length}`;
+			if (docRefSnap.exists()){
+				if (docRefSnap.data().hasOwnProperty('ingresos')){
+					indice = `ingreso${Object.keys(docRefSnap.data().ingresos).length}`;
+				}
+				else if (docRefSnap.data().hasOwnProperty('salidas')){
+				    indice = `ingreso${Object.keys(docRefSnap.data().salidas).length + 1}`;
+			    }
 			}
 			const dataToSend = {
 				salidas: {[indice]:serverTimestamp()}
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			//crea el registro diario en base al serverTimestamp
 		    const yearRef = doc(db, 'a'+String(year)+'temporal', String(month));
 			await setDoc(yearRef, {[String(day)]: {[String(docId)]: dataToSend}}, {merge:true});
-			alert("Se ha creado el registro de salida.");
+			alert(`Registro de salida creado para ${sessionStorage.getItem('visitante')}.`);
 			accionCancelar();
 			
 		} catch (error) {
