@@ -1,20 +1,18 @@
 import { doc, getDoc, db, setDoc, collection, deleteDoc} from './configDB.js';
 
 const idLabel = document.querySelector('#idLabel');
-const userId = localStorage.getItem('p1');
+const userId = sessionStorage.getItem('p1');
 idLabel.textContent += `${userId}`;
 const docLabel = document.querySelector('#docLabel');
-const userDoc = localStorage.getItem('p2');
+const userDoc = sessionStorage.getItem('p2');
 docLabel.textContent += `${userDoc}`;
 const nameLabel = document.querySelector('#nameLabel');
-const userName = localStorage.getItem('p3');
+const userName = sessionStorage.getItem('p3');
 nameLabel.textContent += `${userName}`;
-const emailLabel = document.querySelector('#emailLabel');
-emailLabel.textContent += `${localStorage.getItem('p4')}`;
 const telLabel = document.querySelector('#telLabel');
-telLabel.textContent += `${localStorage.getItem('p5')}`;
+telLabel.textContent += `${sessionStorage.getItem('p4')}`;
 const visitLabel = document.querySelector('#visitLabel');
-visitLabel.textContent += `${localStorage.getItem('p6')}`;
+visitLabel.textContent += `${sessionStorage.getItem('p5')}`;
 
 document.querySelector('#cancelar').addEventListener('click', function(){
 	localStorage.clear();
@@ -31,15 +29,20 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	const tel = document.querySelector('#tel').value.trim();
 	const visit = document.querySelector('#visit').value.trim();
 	const fecha = document.querySelector('#fecha').value;
+	const loading = document.querySelector('#loadingOverlay');
 	
-	if (id && !/^\d+$/.test(id)) {
+	if (id && !/^\d+$/.test(Number(id))) {
         alert("El número de identificación no es válido.");
 		return;
     };
-	if (id && Number(id) == 0){
+	if (id && Number(id) === 0){
 		alert("El número de identificación no es válido.");
 		return;
 	};
+	if (id === userId){
+		alert("La nueva identificación es idéntica a la anterior.");
+		return;
+	}
 	if (tel && !/^\d+$/.test(tel)){
 		alert("El número de teléfono no es válido.");
 		return;
@@ -47,10 +50,6 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	if (!fecha){
 		alert("Debes proporcionar la fecha en la que ingresó la persona.");
 		return;
-	};
-    if (id){
-		privateData['identificacion'] = id;
-		publicData['identificacion'] = id;
 	};
 	if (docType){
 		privateData['documento'] = docType;
@@ -71,6 +70,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 		return;
 	};
 	try {
+		loading.style.display = 'block';
 		//consulta en 'temporal'
 		const docRefDB = doc(db, 'ingresosdb', String(userId));
 		const docSnap = await getDoc(docRefDB);
@@ -116,8 +116,8 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 				};
 			    await setDoc(docRef, privateData, {merge:true});
 			}
-			localStorage.clear();
-			alert("Se ha actualizado el registro.");
+			sessionStorage.clear();
+			alert("Se ha actualizado la información.");
 			window.close();
 		} else {
 			alert("No se encontró el número de documento.");
@@ -125,5 +125,7 @@ document.querySelector('#guardar').addEventListener('click', async (event) => {
 	} catch (error){
 		console.log(`Error: ${error}`);
 		alert("Error al actualizar el registro.");
+	} finally {
+		loading.style.display = 'none';
 	}
 });

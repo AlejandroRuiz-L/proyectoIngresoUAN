@@ -19,6 +19,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 try {
+	//signInWithEmailAndPassword(auth, 'ingresouan@gmail.com', 'adminingresoUAN2309');
 	if (sessionStorage.getItem('userIngreso') && sessionStorage.getItem('pwdIngreso')){
 	    signInWithEmailAndPassword(auth, sessionStorage.getItem('userIngreso'), sessionStorage.getItem('pwdIngreso'));
 	} else {
@@ -29,12 +30,15 @@ try {
 	alert("Error durante la ejecución.")
 	console.log(`Error: ${error}`);
 }
+//&#128584;emoji
 const logo = document.querySelector('#logoUAN');
 const title = document.querySelector('#titulo');
 const titleIngreso = document.querySelector('#tituloIngreso');
 const titleRegistro = document.querySelector('#tituloRegistro');
 const menu = document.querySelector('#menu');
 const loading = document.querySelector('#loadingOverlay');
+//loading.innerHTML = 'Bloqueado temporalmente...';
+//loading.style.display = 'block';
 const backMenu = document.querySelector('#backMenu');
 const formIngreso = document.querySelector('#formIngreso');
 const inOut = document.querySelector('#formIngresoSalida');

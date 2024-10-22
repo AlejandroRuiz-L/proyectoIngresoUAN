@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			let day = fechaSplit[0];
 			let texto = document.createElement('p');
 			texto.style.whiteSpace = 'pre-wrap';
+			texto.textContent = 'Base de datos actualizada.';
 			const ingresosRef = collection(db, 'ingresostemporal'); 
 			const snapIngresos = await getDocs(ingresosRef);
 			if (!snapIngresos.empty){
@@ -124,10 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				});
 				// Espera a que todas las promesas se completen
 				await Promise.all(promises1);
-				texto.textContent = `${users} usuarios actualizados.`;
+				texto.textContent += `\n${users} usuarios modificados.`;
 			} else {
 				//console.log("La informacion de ingresos está actualizada.");
-				texto.textContent = 'No se encontraron nuevos datos de usuarios.';
+				texto.textContent += '\nNo se encontraron nuevos datos de usuarios.';
 			}
 			// Copia desde 'temporal -> principal'
 			setTimeout(async () => {
@@ -211,21 +212,19 @@ document.addEventListener('DOMContentLoaded', () => {
     	        info.appendChild(texto);
 			}, 4000);
 		} catch (error) {
-			loading.style.display = 'none';
+			let infoError = '';
 			if (error.code === "auth/invalid-login-credentials"){
-				console.log(`Error: ${error}`);
-				alert("Correo o contraseña incorrectos.");
+				infoError = "Correo o contraseña incorrectos.";
 			}
 			if (error.code === "auth/invalid-email"){
-				console.log(`Error: ${error}`);
-				alert("El correo no es válido.");
+				infoError = "El correo no es válido.";
 			}
 			if (error.code === "auth/network-request-failed"){
-				alert("No tienes conexión a internet.");
-			} else {
-    			console.log(`Error: ${error}`);
-	    		alert("Error al iniciar sesión.");
+				infoError = 'No tienes conexión a internet.';
 			}
+    		console.log(`Error: ${error}`);
+	    	alert(`Error al iniciar sesión.\n${infoError}`);
+			loading.style.display = 'none';
 		}
 	});
 });
@@ -248,8 +247,8 @@ document.getElementById('logout').addEventListener('click', async () => {
 //manejo de evento clik de los botones
 document.getElementById('buscar').addEventListener('click', async () => {
 	const docId = document.querySelector('#docId').value.trim();
-	if (!docId) {
-		alert("Debes ingresar un número de documento.");
+	if (!docId || !/^\d+$/.test(docId)) {
+		alert("Debes ingresar un número de documento válido.");
 		return;
 	}
 	loading.style.display = 'block';
@@ -272,25 +271,22 @@ document.getElementById('buscar').addEventListener('click', async () => {
 			editBtn.id = 'editar';
 			editBtn.textContent = 'Editar';
 			texto.style.whiteSpace = 'pre-wrap';
-			const _id = data.identificacion;
 			const _docu = data.documento;
 			const _name = data.nombre;
-			const _email = data.correo ? data.correo : 'N/A';
 			const _tel = data.telefono ? data.telefono : 'N/A';
 			const _visit = data.visitante;
 
 			Object.keys(ingresos).forEach(key => {
 				let registro = [
-					`${_id}`, 
+					`${docId}`, 
 					`${_docu}`, 
 					`${_name}`, 
-					`${_email}`,
 					`${_tel}`, 
 					`${_visit}`,
 					`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
 					`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
 				];
-				texto.textContent = `${_docu}: ${_id}\nNombre: ${_name}`;
+				texto.textContent = `${_docu}: ${docId}\n${_name}\n\nPuedes editar la información del usuario:`;
 				dataDownload.push(registro);
 				counter += 1;
 			});
@@ -302,16 +298,15 @@ document.getElementById('buscar').addEventListener('click', async () => {
 			info.appendChild(msg);
 			downloadBTN.style.display = 'block';
 			document.querySelector('#editar').addEventListener('click', function(){
-				localStorage.setItem('p1', _id);
-			    localStorage.setItem('p2', _docu);
-			    localStorage.setItem('p3', _name);
-				localStorage.setItem('p4', _email);
-				localStorage.setItem('p5', _tel);
-				localStorage.setItem('p6', _visit);
+				sessionStorage.setItem('p1', docId);
+			    sessionStorage.setItem('p2', _docu);
+			    sessionStorage.setItem('p3', _name);
+				sessionStorage.setItem('p4', _tel);
+				sessionStorage.setItem('p5', _visit);
 				window.open(`editar.html`, '_blank');
 			});
 		} else {
-			alert("No se encontró el documento.");
+			alert("El número de documento no se encuentra registrado.");
 		}
 	} catch (error) {
 		console.log(`Error: ${error}`);

@@ -13,7 +13,7 @@
   <h1 class="titulo" id="titulo">Administración de ingresos <br>Sede Bucaramanga</h1>
   <div class="caja">
     <br><button id="logout" class="protected-content boton">Cerrar Sesión</button>
-    <a href="index.html" class="link"><button class="boton btn-flecha"><i style="font-size: 25px;" class="fas fa-house-user"></i></button></a>
+    <!--<a href="index.html" class="link"><button class="boton btn-flecha"><i style="font-size: 25px;" class="fas fa-house-user"></i></button></a>-->
   </div>
   <main class="container form">
     <form id="admin-form">
@@ -26,20 +26,22 @@
 	
     <div id="menu" class="protected-content container">
 	  <div class="caja">
-	    <label for="docId">Documento:</label>
+	    <h3><label for="docId">Buscar un usuario en especifico:</label></h3>
 	    <input type="text" id="docId" class="input" placeholder="Número de documento a buscar">
 	    <button class="boton" id="buscar">Buscar</button>
 	  </div>
 	  
 	  <div class="caja">
+	    <h3><label for="fecha" class="label">Ingresa una fecha para generar reportes:</label></h3>
 	    <input type="date" id="fecha" class="input">
 	    <button class="boton" id="diario">Reporte Diario</button>
 	    <button class="boton" id="semanal">Reporte Semanal</button>
 	  </div>
 	  
 	  <div class="caja">
-		<button class="boton" id="registro">Registro</button>
-		<button class="boton protected-content" id="registros">Registros</button>
+	    <h3>Registra usuarios, crea ingresos y salidas.</h3>
+		<button class="boton" id="registro">Actualizar</button>
+		<button class="boton protected-content" id="registros">Registros</button><!--oculto temporalmente-->
 	  </div>
 		<button class="boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
 	  </div>
