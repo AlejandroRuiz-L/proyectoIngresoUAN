@@ -25,11 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
 				const data = docSnap.data();
 				sessionStorage.setItem('visitante', data.nombre);
 				let mensaje = document.createElement('p');
+				mensaje.classList.add('textBorder');
 				mensaje.style.whiteSpace = "pre-wrap";
 				mensaje.style.marginTop = '30px';
 				mensaje.textContent = "Si tus datos son incorrectos presiona 'Cancelar'\nde lo contrario registra tu ingreso o tu salida.";
 				let texto = document.createElement('p');
-				texto.textContent += `${data.documento}: ${docId}\n${data.nombre}`;
+				texto.textContent += `${data.documento}: ${docId}\n${data.nombre}`;//\n${data.visitante}`;
 				texto.classList.add('lista-item');
 				divInfo.appendChild(texto);
 				divInfo.appendChild(mensaje);

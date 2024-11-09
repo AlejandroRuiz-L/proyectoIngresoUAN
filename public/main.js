@@ -1,5 +1,5 @@
 import {db, doc, getDoc, serverTimestamp, setDoc} from './configDB.js';
-import { formatDate } from './functionsDate.js';
+import { formatDate, isValidName } from './functionsDate.js';
 
 const loading = document.querySelector('#loadingOverlay');
 document.querySelector('#formIngreso').addEventListener('submit', async (event) => {
@@ -12,6 +12,10 @@ document.querySelector('#formIngreso').addEventListener('submit', async (event) 
 	
 	if(!name || !numId){
 		alert('El nombre y la identificación son obligatorios');
+		return;
+	}
+	if (!isValidName(name)){
+		alert("El nombre no puede contener números ni simbolos.");
 		return;
 	}
 	if (!/^\d+$/.test(numId)){
@@ -60,8 +64,8 @@ document.querySelector('#formIngreso').addEventListener('submit', async (event) 
 			//crea el registro diario temporal en base al serverTimestamp
 			const temporalYear = doc(db, 'a'+String(year)+'temporal', String(month));
 			await setDoc(temporalYear, {[String(day)]: {[String(numId)]: {ingresos: {ingreso1: serverTimestamp()}}}}, {merge:true});
+			event.target.reset();
 			alert(`Se registró exitosamente a ${name}.\nSe ha creado el primer ingreso.`);
-			window.location.href= "index.html";
 		}
 	} catch (error) {
 		console.error('Error al enviar datos:', error);

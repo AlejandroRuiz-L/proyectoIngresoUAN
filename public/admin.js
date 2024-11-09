@@ -42,6 +42,16 @@ function ocultarMenu() {
 	downloadBTN.style.display = 'none';
 };
 
+document.querySelector('#seePwd').addEventListener('change', (event) => {
+	const seePwd = event.target;
+	const pwd = document.querySelector('#password');
+	if (seePwd.checked){
+		pwd.type = 'text';
+	} else {
+		pwd.type = 'password';
+	}
+});
+
 //inicio de sesion admin
 document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('ingreso').addEventListener('click', async (event) => {
@@ -57,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			document.querySelector('#logoUAN').style.display = 'none';
 			document.querySelector('#titulo').style.display = 'none';
 			logout.style.display = 'block';
+			document.querySelector('#home').style.display = 'none';
 			downloadBTN.style.display = 'none';
 			info.innerHTML = 'Cargando...';
 			info.style.display = 'flex';
@@ -239,6 +250,7 @@ document.getElementById('logout').addEventListener('click', async () => {
 		document.querySelector('#logoUAN').style.display = 'block';
 		document.querySelector('#titulo').style.display = 'block';
 		logout.style.display = 'none';
+		document.querySelector('#home').style.display = 'block';
     } catch (error) {
         console.error('Error al cerrar sesión:', error.message);
     }
@@ -404,8 +416,8 @@ semanal.addEventListener('click', async () => {
 				i--;
 				continue;
 			};
-			const monthDocRef = doc(db, 'a'+String(year)+'db', String(month));
-		    const docRef = collection(monthDocRef, String(day).length < 2 ? '0' + String(day) : String(day));
+			const monthDocRef = doc(db, 'a'+String(year)+'db', String(month).length < 2 ? '0'+String(month) : String(month));
+		    const docRef = collection(monthDocRef, String(day).length < 2 ? '0'+String(day) : String(day));
 		    const docSnap = await getDocs(docRef);
 			counterPeople += docSnap.size;
 			if (!docSnap.empty){

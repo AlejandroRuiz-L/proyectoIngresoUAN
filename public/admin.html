@@ -10,36 +10,43 @@
 </head>
 <body>
   <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
-  <h1 class="titulo" id="titulo">Administración de ingresos <br>Sede Bucaramanga</h1>
+  <h1 class="titulo textBorder" id="titulo">Administración de ingresos <br>Sede Bucaramanga</h1>
   <div class="caja">
     <br><button id="logout" class="protected-content boton">Cerrar Sesión</button>
-    <!--<a href="index.html" class="link"><button class="boton btn-flecha"><i style="font-size: 25px;" class="fas fa-house-user"></i></button></a>-->
+    <button class="boton btn-flecha"><a href="index.html" class="link" id="home"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
   </div>
-  <main class="container form">
-    <form id="admin-form">
-	  <label for="correo">Correo:</label>
-	  <input type="email" id="correo" class="input" autocomplete="off" required>
-	  <label for="password">Contraseña:</label>
-	  <input type="password" class="input" id="password" required>
-	  <button class="boton" id="ingreso">Ingresar</button>
+  <main class="container">
+    <form id="admin-form" class="container form">
+	  <div>
+	    <label for="correo" class="textBorder">Correo:</label>
+	    <input type="email" id="correo" class="input" placeholder="Correo de Administración" required>
+	  </div>
+	  
+	  <div>
+	    <label for="password" class="textBorder">Contraseña:</label>
+	    <input type="password" class="input" id="password" placeholder="Ingresa tu Contraseña" required>
+	    <label for="seePwd" class="textBorder">Ver contraseña: </label><input type="checkbox" id="seePwd">
+	  </div>
+	  
+	    <button class="boton" id="ingreso">Ingresar</button>
 	</form>
 	
     <div id="menu" class="protected-content container">
 	  <div class="caja">
-	    <h3><label for="docId">Buscar un usuario en especifico:</label></h3>
+	    <h3><label for="docId" class="textBorder">Buscar un usuario en especifico:</label></h3>
 	    <input type="text" id="docId" class="input" placeholder="Número de documento a buscar">
 	    <button class="boton" id="buscar">Buscar</button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h3><label for="fecha" class="label">Ingresa una fecha para generar reportes:</label></h3>
+	    <h3><label for="fecha" class="textBorder">Ingresa una fecha para generar reportes:</label></h3>
 	    <input type="date" id="fecha" class="input">
 	    <button class="boton" id="diario">Reporte Diario</button>
 	    <button class="boton" id="semanal">Reporte Semanal</button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h3>Registra usuarios, crea ingresos y salidas.</h3>
+	    <h3 class="textBorder">Registra usuarios, crea ingresos y salidas.</h3>
 		<button class="boton" id="registro">Actualizar</button>
 		<button class="boton protected-content" id="registros">Registros</button><!--oculto temporalmente-->
 	  </div>
