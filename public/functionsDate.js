@@ -32,3 +32,38 @@ export function dateTimeToServerTime(dateTime){
 export function isValidName(str){
 	return /^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/.test(str);
 }
+
+export function isValidEmail(email){
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+export function isNum(str){
+	return /^\d+$/.test(str);
+}
+
+export function newBtn(id, textC, url){
+	const btn = document.createElement('button');
+	btn.id = id;
+	btn.textContent = textC;
+	btn.classList.add("boton");
+	btn.onclick = function (){
+		window.open(`${url}.html`, '_blank');
+	};
+	return btn;
+}
+
+export function formatTimestamp(timestamp) {//convierte un Timestamp a formato especifico de fecha y hora
+  const date = timestamp.toDate();
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+export function splitDate(date){
+	return date.split(/[\/\-\\T]+/);
+}

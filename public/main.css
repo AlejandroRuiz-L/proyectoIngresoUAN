@@ -7,10 +7,11 @@
 body{
 	background: #014886;
 	text-align: center;
-	margin-top: 40px;
+	margin-top: 20px;
 	margin-bottom: 40px;
 	font-size: 1.3rem;
 	color: white;
+	font-weight: bold;
 }
 
 .h1{
@@ -32,6 +33,7 @@ body{
 	gap: 15px;
 	border-bottom: 4px solid #997b21;
 	padding-bottom: 12px;
+	border-radius: 50px;
 }
 
 .minionFondo{
@@ -41,7 +43,7 @@ body{
 }
 
 .logo{
-	width: 30%;
+	width: 20%;
 	display: block;
 	margin: 20px auto;
 	transition: .7s;
@@ -57,7 +59,7 @@ body{
 }
 
 .logoQR{
-	width: 50px;
+	width: 60px;
 }
 
 .boton{
@@ -136,7 +138,7 @@ body{
 .input{
 	display: block;
 	margin: 10px auto;
-	width: 65%;
+	width: 80%;
 	border-radius: 20px;
 	height: 35px;
 	border: 1px solid black;
@@ -180,7 +182,7 @@ body{
 
 @media (max-width: 770px){
 	.logo{
-		width: 60%;
+		width: 50%;
 	}
 	
 	.logoBienvenida{
@@ -230,7 +232,7 @@ body{
 	}
 	
 	.input{
-		width: 100%;
+		width: 98%;
 	}
 	
 	.titulo{

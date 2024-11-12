@@ -9,54 +9,61 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
-  <h1 class="titulo textBorder" id="titulo">Administración de ingresos <br>Sede Bucaramanga</h1>
-  <div class="caja">
-    <br><button id="logout" class="protected-content boton">Cerrar Sesión</button>
-    <button class="boton btn-flecha"><a href="index.html" class="link" id="home"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
-  </div>
+  <header>
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titulo textBorder" id="titulo">Administración de Novedades<br>Sede Bucaramanga</h1>
+  
+    <div class="caja">
+      <br><button id="logout" class="protected-content boton">Cerrar Sesión</button>
+      <button class="boton btn-flecha" id="home"><a href="index.html" class="link"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
+    </div>
+  </header>
   <main class="container">
     <form id="admin-form" class="container form">
 	  <div>
 	    <label for="correo" class="textBorder">Correo:</label>
-	    <input type="email" id="correo" class="input" placeholder="Correo de Administración" required>
+	    <input type="email" id="correo" class="input" placeholder="Correo de Administración">
 	  </div>
 	  
 	  <div>
 	    <label for="password" class="textBorder">Contraseña:</label>
-	    <input type="password" class="input" id="password" placeholder="Ingresa tu Contraseña" required>
+	    <input type="password" class="input" id="password" placeholder="Ingresa tu Contraseña">
 	    <label for="seePwd" class="textBorder">Ver contraseña: </label><input type="checkbox" id="seePwd">
 	  </div>
 	  
-	    <button class="boton" id="ingreso">Ingresar</button>
+	    <button type="submit" class="boton" id="ingreso">Ingresar</button>
 	</form>
 	
     <div id="menu" class="protected-content container">
 	  <div class="caja">
-	    <h3><label for="docId" class="textBorder">Buscar un usuario en especifico:</label></h3>
+	    <h3><label for="docId" class="textBorder">Buscar un usuario:</label></h3>
 	    <input type="text" id="docId" class="input" placeholder="Número de documento a buscar">
 	    <button class="boton" id="buscar">Buscar</button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h3><label for="fecha" class="textBorder">Ingresa una fecha para generar reportes:</label></h3>
-	    <input type="date" id="fecha" class="input">
-	    <button class="boton" id="diario">Reporte Diario</button>
-	    <button class="boton" id="semanal">Reporte Semanal</button>
+	    <h3 class="textBorder">Genera reportes diarios y semanales</h3>
+	    <button class="boton" id="reportes">Reportes</button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h3 class="textBorder">Registra usuarios, crea ingresos y salidas.</h3>
-		<button class="boton" id="registro">Actualizar</button>
+	    <h3 class="textBorder">Registra usuarios, crea ingresos y salidas</h3>
+		<button class="boton" id="novedades">Novedades</button>
 		<button class="boton protected-content" id="registros">Registros</button><!--oculto temporalmente-->
 	  </div>
-		<button class="boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	  
+	  <div class="caja ">
+	    <h3 class="textBorder" style="margin-bottom: 10px;">Préstamo de Equipos</h3>
+	    <button class="boton" title="Prestamo Equipos" id="prestamos"><i class="fas fa-desktop" style="font-size: 27px;"></i></button>
 	  </div>
 	</div>
+	
+	<button class="boton btn-flecha protected-content" id="backMenu"><i class="fas fa-arrow-left"></i></button>
 
 	<div id="loadingOverlay">Cargando, por favor espere...</div>
 	
-	<div id="info" class="protected-content container"></div>
+	<div id="info" class="protected-content container textBorder"></div>
 	
 	<button id="downloadBTN" class="protected-content boton btn-flecha" title="Descargar"><i class="fas fa-arrow-down"></i></button>
   </main>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="LogoInstitucionalUANAzul.png" type="image/png">
+  <title>Reportes</title>
+  <link rel="stylesheet" href="main.css" >
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="caja">
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titulo textBorder" id="titulo">Genera y Descarga Reportes</h1>
+  </header>
+  <main class="container">
+    <div id="loadingOverlay">Cargando. Por favor, espere...</div>
+	
+    <div class="caja" id="menu">
+      <h3><label for="fecha" class="textBorder">Ingresa una fecha para generar reportes:</label></h3>
+      <input type="date" id="fecha" class="input">
+      <button class="boton" id="diario">Reporte Diario</button>
+      <button class="boton" id="semanal">Reporte Semanal</button>
+	  <br><button class="boton" id="cancelar">Cancelar</button>
+    </div>
+
+	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>
+
+	<div class="caja protected-content textBorder" id="info"></div>
+	
+	<button id="downloadBTN" class="protected-content boton btn-flecha" title="Descargar"><i class="fas fa-arrow-down"></i></button>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script src="reportes.js" type="module"></script>
+</body>
+</html>

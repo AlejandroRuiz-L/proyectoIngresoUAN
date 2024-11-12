@@ -1,10 +1,9 @@
 import { getAuth, signOut, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { getFirestore, doc, getDoc, getDocs, deleteDoc, setDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { formatDate, esFechaValida } from './functionsDate.js';
+import { formatDate, isValidEmail } from './functionsDate.js';
 
-// Configura Firebase
-const firebaseConfig = {
+const firebaseConfig = {// Configura Firebase
   apiKey: "AIzaSyDxxYjycjMEzvcUQLhnYe0fr9yA52LUfyA",
   authDomain: "ingreso-uan-bucaramanga.firebaseapp.com",
   projectId: "ingreso-uan-bucaramanga",
@@ -22,9 +21,8 @@ const adminForm = document.querySelector('#admin-form');
 const logout = document.querySelector('#logout');
 const loading = document.querySelector('#loadingOverlay');
 const menu = document.querySelector('#menu');
+const backMenu = document.querySelector('#backMenu');
 const info = document.querySelector('#info');
-const diario = document.querySelector('#diario');
-const semanal = document.querySelector('#semanal');
 const encabezado = ["IDENTIFICACION", "DOCUMENTO", "NOMBRE", "TELEFONO", "TIPO DE VISITANTE", "INGRESO", "SALIDA"];
 let dataDownload = [];
 const downloadBTN = document.querySelector('#downloadBTN');
@@ -52,13 +50,19 @@ document.querySelector('#seePwd').addEventListener('change', (event) => {
 	}
 });
 
-//inicio de sesion admin
-document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('ingreso').addEventListener('click', async (event) => {
+document.addEventListener('DOMContentLoaded', () => {//inicio de sesion admin
+	document.querySelector('#admin-form').addEventListener('submit', async (event) => {
 		event.preventDefault();
-		
 		const email = document.querySelector('#correo').value.trim();
 		const passwordUser = document.querySelector('#password').value.trim();
+		if (!isValidEmail(email)){
+			alert("Debes ingresar un email válido.");
+			return;
+		}
+		if (!passwordUser){
+			alert("Debes ingresar una contraseña.");
+			return;
+		}
 		try {
 			loading.style.display = 'block';
 			await signInWithEmailAndPassword(auth, email, passwordUser);
@@ -251,21 +255,19 @@ document.getElementById('logout').addEventListener('click', async () => {
 		document.querySelector('#titulo').style.display = 'block';
 		logout.style.display = 'none';
 		document.querySelector('#home').style.display = 'block';
+		backMenu.style.display = 'none';
     } catch (error) {
         console.error('Error al cerrar sesión:', error.message);
     }
 });
 
-//manejo de evento clik de los botones
-document.getElementById('buscar').addEventListener('click', async () => {
+document.getElementById('buscar').addEventListener('click', async () => {//manejo de evento clik de los botones
 	const docId = document.querySelector('#docId').value.trim();
 	if (!docId || !/^\d+$/.test(docId)) {
 		alert("Debes ingresar un número de documento válido.");
 		return;
 	}
 	loading.style.display = 'block';
-	info.style.display = 'flex';
-	info.innerHTML = 'Cargando...';
 	dataDownload = [];
 	try {
 		const docRef = doc(db, 'ingresosdb', String(docId));
@@ -317,6 +319,9 @@ document.getElementById('buscar').addEventListener('click', async () => {
 				sessionStorage.setItem('p5', _visit);
 				window.open(`editar.html`, '_blank');
 			});
+			info.style.display = 'flex';
+			backMenu.style.display = 'block';
+			menu.style.display = 'none';
 		} else {
 			alert("El número de documento no se encuentra registrado.");
 		}
@@ -328,141 +333,7 @@ document.getElementById('buscar').addEventListener('click', async () => {
 	}
 });
 
-diario.addEventListener('click', async () => {
-	const fecha = document.querySelector('#fecha').value;
-	if (!fecha){
-		alert("Debes ingresar una fecha.");
-		return;
-	};
-	loading.style.display = 'block';
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
-	dataDownload = [];
-	const fechaSplit = fecha.split(/[\/\-\\]+/);
-	const year = fechaSplit[0];
-	const month = fechaSplit[1];
-	const day = fechaSplit[2];
-	try {
-		const monthDocRef = doc(db, 'a'+String(year)+'db', String(month));
-		const docRef = collection(monthDocRef, String(day));
-		const docSnap = await getDocs(docRef);
-		if (!docSnap.empty){
-			let counter = 0;
-			docSnap.forEach(d => {
-				const data = d.data();
-				const ingresos = data.ingresos || {};
-			    const salidas = data.salidas || {};
-				Object.keys(ingresos).forEach(key => {
-					let registro = [
-						`${d.id}`,
-						`${data.documento}`,
-						`${data.nombre}`,
-						`${data.telefono ? data.telefono : 'N/A'}`,
-						`${data.visitante}`,
-						`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
-						`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
-				    ];
-					counter += 1;
-					dataDownload.push(registro);
-				});
-			});
-			dataDownload.unshift([`Reporte_diario_${fecha}`], [`${docSnap.size} personas ingresaron ${counter} veces a la universidad`], encabezado);
-			const msg = document.createElement('p');
-			msg.style.whiteSpace = 'pre-wrap';
-			msg.textContent = `Se encontraron ${docSnap.size} usuarios.\n${counter} registros están listos para descargar.`;
-			info.innerHTML = '';
-			info.appendChild(msg);
-			downloadBTN.style.display = 'block';
-		} else {
-			alert("No hay registros para la fecha especificada.");
-			return;
-		}
-	} catch (error){
-		console.log(`Error: ${error}`);
-		alert("Ocurrió un error al consultar los registros.");
-	} finally{
-		loading.style.display = 'none';
-	}
-});
-
-semanal.addEventListener('click', async () => {
-	const fechaValue = document.querySelector('#fecha').value;
-	if (!fechaValue){
-		alert("Debes seleccionar una fecha.");
-		return;
-	};
-	loading.style.display = 'block';
-	info.innerHTML = 'Cargando...';
-	info.style.display = 'flex';
-	dataDownload = [];
-	const fechaSplit = fechaValue.split(/[\/\-\\]+/);
-	let year = fechaSplit[0];
-	let month = fechaSplit[1];
-	let day = fechaSplit[2];
-	let limitDate;
-	try {
-		let counterPeople = 0;
-		let counterRegister = 0;
-		for(let i = 1; i <= 7; i++){
-			if (!esFechaValida(Number(year), Number(month), Number(day))){
-				if (Number(month) + 1 >= 13){
-					year = Number(year) + 1;
-					month = 1;
-					day = 1;
-				} else {
-					month = Number(month) + 1;
-					day = 1;
-				}
-				i--;
-				continue;
-			};
-			const monthDocRef = doc(db, 'a'+String(year)+'db', String(month).length < 2 ? '0'+String(month) : String(month));
-		    const docRef = collection(monthDocRef, String(day).length < 2 ? '0'+String(day) : String(day));
-		    const docSnap = await getDocs(docRef);
-			counterPeople += docSnap.size;
-			if (!docSnap.empty){
-				docSnap.forEach(d => {
-					const data = d.data();
-					const ingresos = data.ingresos || {};
-					const salidas = data.salidas || {};
-					Object.keys(ingresos).forEach(key => {
-						let registro = [
-							`${d.id}`, 
-							`${data.documento}`, 
-							`${data.nombre}`, 
-							`${data.telefono ? data.telefono : 'N/A'}`, 
-							`${data.visitante}`,
-							`${ingresos[key] ? formatDate(ingresos[key]) : 'N/A'}`,
-							`${salidas[key] ? formatDate(salidas[key]) : 'N/A'}`
-						];
-						counterRegister += 1;
-						dataDownload.push(registro);
-					});
-				});
-			} else {
-				dataDownload.push([`No hay registros para la fecha ${day}/${month}/${year}`]);
-			}
-			if (i == 7){
-				limitDate = `${year}-${month}-${day}`;
-			}
-			day = Number(day) + 1;
-		};
-		dataDownload.unshift([`Reporte_semanal_${fechaValue}_${limitDate}`], [`${counterPeople} personas ingresaron ${counterRegister} veces a la universidad`], encabezado);
-		const msg = document.createElement('p');
-		msg.style.whiteSpace = 'pre-wrap';
-		msg.textContent = `Se encontraron ${counterPeople} usuarios.\n${counterRegister} registros están listos para descargar.`;
-		info.innerHTML = '';
-		info.appendChild(msg);
-		downloadBTN.style.display = 'block';
-	} catch (error){
-		console.log(`Error: ${error}`);
-		alert("Ocurrió un error al consultar los registros.");
-	} finally{
-		loading.style.display = 'none';
-	}
-});
-
-/*document.getElementById('registros').addEventListener('click', async () => {
+/*document.getElementById('registros').addEventListener('click', async () => {//inhabilitado(realiza muchas lecturas en DB)
 	loading.style.display = 'block';
 	try {
 		info.innerHTML = 'Cargando...';
@@ -508,18 +379,28 @@ semanal.addEventListener('click', async () => {
 	}
 });*/
 
-document.querySelector('#registro').addEventListener('click', () => {
+document.querySelector('#reportes').addEventListener('click', () => {
+	window.open("reportes.html", "_blank");
+});
+
+document.querySelector('#novedades').addEventListener('click', () => {
 	window.open("registroAdmin.html", "_blank");
 });
 
-document.getElementById('backMenu').addEventListener('click', function(){
+document.querySelector('#prestamos').addEventListener('click', () => {
+	window.open('prestamos.html', '_blank');
+});
+
+backMenu.addEventListener('click', () => {
 	info.innerHTML = '';
 	info.style.display = 'none';
 	downloadBTN.style.display = 'none';
 	dataDownload = [];
+	menu.style.display = 'flex';
+	backMenu.style.display = 'none';
 });
 
-downloadBTN.addEventListener('click', function(){
+downloadBTN.addEventListener('click', () => {
 	loading.style.display = 'block';
 	const ws_data = dataDownload;//filas excel
 	const ws = XLSX.utils.aoa_to_sheet(ws_data);

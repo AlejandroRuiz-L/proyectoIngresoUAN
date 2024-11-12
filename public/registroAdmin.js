@@ -1,7 +1,7 @@
 import { getAuth, signOut, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { getFirestore, doc, getDoc, setDoc} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { dateTimeToServerTime } from './functionsDate.js';
+import { dateTimeToServerTime, isValidName } from './functionsDate.js';
 
 // Configura Firebase
 const firebaseConfig = {
@@ -82,6 +82,10 @@ document.querySelector('#registro').addEventListener('click', () => {
 	titleRegistro.style.display = 'block';
 	backMenu.style.display = 'block';
 	formRegistro.style.display = 'flex';
+});
+
+document.querySelector('#cancelar').addEventListener('click', () => {
+	window.close();
 });
 
 let userData;
@@ -215,6 +219,10 @@ formRegistro.addEventListener('submit', async (event) => {
 	
 	if (!name || !id || !dateTime){
 		alert("Los campos marcados con '*' son obligatorios.");
+		return;
+	}
+	if (!isValidName(name)){
+		alert("El nombre no puede contener números ni simbolos.");
 		return;
 	}
 	if (!/^\d+$/.test(id)){
