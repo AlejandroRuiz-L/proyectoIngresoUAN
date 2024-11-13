@@ -14,7 +14,35 @@
   </header>
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
+	
+	<form class="form container" id="formEdit">
+	  <div>
+	    <label class="textBorder" for="serial" id="labelSerial">Serial:</label>
+		<input type="text" id="serial" class="input" placeholder="Nuevo serial">
+	  </div>
+	  
+	  <div>
+	    <label for="product" class="textBorder" id="labelProduct">Producto:</label>
+		<input type="text" id="product" class="input" placeholder="Nuevo tipo de producto">
+	  </div>
+	  
+	  <div>
+	    <label class="textBorder" for="active" id="labelActive">Activo fijo:</label>
+		<input type="text" id="active" class="input" placeholder="Nuevo activo fijo">
+	  </div>
+	  
+	  <div class="caja">
+	    <button type="submit" class="boton">Editar</button>
+	    <button type="reset" class="boton">Limpiar</button>
+	    <button type="button" class="boton" id="cancelar">Cancelar</button>
+	  </div>
+	  
+	  <div class="caja">
+	    <h2 class="textBorder">Eliminar Equipo</h2>
+	    <button class="boton deleteBtn" type="button" id="trash" title="Eliminar Equipo"><i class="fas fa-trash" style="font-size: 27px;"></i></button>
+	  </div>
+	</form>
   </main>
-  <script src="prestamos.js" type="module" defer></script>
+  <script src="editarEquipo.js" type="module" defer></script>
 </body>
 </html>

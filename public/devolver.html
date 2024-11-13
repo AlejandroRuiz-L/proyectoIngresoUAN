@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="LogoInstitucionalUANAzul.png" type="image/png">
   <title>Devolver Equipo</title>
-  <link rel="stylesheet" href="main.css" >
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="main.css">
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
 </head>
 <body>
   <header class="container caja">
@@ -14,7 +14,35 @@
   </header>
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
+	
+	<h2 class="textBorder" id="titulo"></h2>
+	
+	<form class="container form" id="formToReturn">
+	  <div>
+	    <label for="id" class="textBorder">Documento:</label>
+		<input type="text" id="id" class="input" placeholder="Número de documento">
+	  </div>
+	  
+	  <div>
+	    <label for="name" class="textBorder">Responsable:</label>
+		<input type="text" id="name" class="input" placeholder="Persona quien recibe">
+	  </div>
+	  
+	  <div>
+	    <label for="date" class="textBorder">Fecha:</label>
+		<input type="datetime-local" id="fecha" class="input">
+	  </div>
+	  
+	  <div>
+	    <label for="obs" class="textBorder">Observaciones:</label>
+		<textarea id="obs" class="input" style="max-width: 80%; max-height: 100px; min-width: 80%; min-height: 100px;" placeholder="Ingresa las observaciones..."></textarea>
+	  </div>
+	  
+	  <button type="submit" class="boton">Devolver</button>
+	  <button type="reset" class="boton">Limpiar</button>
+	  <button type="button" class="boton" id="cancelar">Cancelar</button>
+	</form>
   </main>
-  <script src="prestamos.js" type="module" defer></script>
+  <script src="devolver.js" type="module" defer></script>
 </body>
 </html>

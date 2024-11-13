@@ -67,3 +67,9 @@ export function formatTimestamp(timestamp) {//convierte un Timestamp a formato e
 export function splitDate(date){
 	return date.split(/[\/\-\\T]+/);
 }
+
+export function capitalize(string){
+	let letra = string[0].toUpperCase();
+	let newString = `${letra}${string.slice(1)}`;
+	return newString;
+}

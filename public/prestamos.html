@@ -18,13 +18,6 @@
     <div id="menu">
 	  <div class="caja">
 		  <h2 class="textBorder" style="margin-top: 15px;">Buscar Equipo</h2>
-		  <label class="textBorder">Tipo:</label>
-		  <select id="type" class="input">
-			<option value="">- Tipo de Equipo -</option>
-			<option value="computo">Computo</option>
-			<option value="accesorios">Accesorio</option>
-			<option value="otros">Otro</option>
-		  </select>
 		  <label class="textBorder">Serial:</label>
 		  <input type="text" id="serial" class="input" placeholder="Serial del Equipo">
 		  <button class="boton" id="buscar" title="Buscar"><i class="fas fa-search" style="font-size: 27px;"></i></button>
@@ -34,45 +27,18 @@
 	    <h2 class="textBorder" style="margin-top: 15px;">Agregar Equipo</h2>
 	    <button class="boton" id="agregar" title="Agregar"><i class="fas fa-list" style="font-size: 27px;"></i></button>
 	  </div>
+	  
+	  <div>
+	    <h2 class="textBorder" style="margin-top: 15px;">Reportes</h2>
+		<button class="boton" id="reportes" title="Reportes"><i class="fas fa-pencil" style="font-size: 27px"></i></button>
+	  </div>
 		
 	  <br><button class="boton" id="cancelar">Cancelar</button>
 	</div>
 	
+	<button class="boton btn-flecha protected-content" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	
 	<div class="caja protected-content" id="info"></div>
-  
-    <form class="form container protected-content" id="formPrestamo">
-	  <div>
-	    <label class="textBorder" for="name">Nombre:</label>
-		<input type="text" id="name" class="input" placeholder="Nombre Completo">
-	  </div>
-	  
-	  <div>
-	    <label for="typeDoc" class="textBorder">Documento:</label>
-		<select id="typeDoc" class="input">
-		  <option value="" selected>- Tipo de Documento -</option>
-		  <option value="C.C">C.C</option>
-		  <option value="C.E">C.E</option>
-		  <option value="T.I">T.I</option>
-		  <option value="PA">PA</option>
-		  <option value="PEP">PEP</option>
-		  <option value="OTRO">OTRO</option>
-		</select>
-	  </div>
-	  
-	  <div>
-	    <label class="textBorder" for="id">Identificación:</label>
-		<input type="text" id="id" class="input" placeholder="Número de Identificación">
-	  </div>
-	  
-	  <div>
-	    <label for="equipo" class="textBorder">Equipo:</label>
-	    <select id="equipo" class="input">
-		  <option value="" selected>- Equipo a Prestar -</option>
-		</select>
-	  </div>
-	  
-	  <button type="submit" id="prestar" class="boton">Prestar</button>
-	</form>
   </main>
   <script src="prestamos.js" type="module" defer></script>
 </body>

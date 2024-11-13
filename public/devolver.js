@@ -1,6 +1,6 @@
 import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore, doc, setDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getFirestore, doc, setDoc, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 import { isValidName, isNum, formatTimestamp, splitDate, capitalize } from './functionsDate.js';
 
 const firebaseConfig = {//firebase PRESTAMOS
@@ -32,68 +32,59 @@ const title = document.querySelector('#titulo');
 title.textContent = `${capitalize(product)}`;
 const loading = document.querySelector('#loadingOverlay');
 
-document.querySelector('#formPrestar').addEventListener('submit', async (event) => {
+document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
+
+document.querySelector('#formToReturn').addEventListener('submit', async (event) => {
 	event.preventDefault();
-	const name = document.querySelector('#name').value;
-	let date = document.querySelector('#date').value;
-	const id = document.querySelector('#id').value;
-	const ocupation = document.querySelector('#cargo').value;
-	const dep = document.querySelector('#dependence').value;
-	const responsable = document.querySelector('#responsable').value;
+	const id = document.querySelector('#id').value.trim();
+	const date = document.querySelector('#date').value;
+	const name = document.querySelector('#name').value.trim();
+	const obs = document.querySelector('#obs').value.trim();
 	
-	if (!name || !isValidName(name)){
-		alert("Los nombres no pueden estar vacíos.");
+	if (!id || !name){
+		alert("Los campos de documento y responsable son obligatorios.");
 		return;
 	}
-	if (!isValidName(responsable) || !isValidName(name)){
-		alert("Los nombres no pueden contener símbolos o números.");
-		return;
-	}
-	if (!id || !isNum(id)){
+	if (!isNum(id)){
 		alert("El número de documento no es válido.");
+		return;
+	}
+	if (!isValidName(name)){
+		alert("El nombre no puede contener números ni símbolos.");
 		return;
 	}
 	if (!date){
 		date = formatTimestamp(Timestamp.now());
 	}
-	const dateSplited = splitDate(date);
-	let year = dateSplited[0];
-	let month = dateSplited[1];
-	let day = dateSplited[2];
-	const timeSplit = dateSplited[3].split(':');
-	let hour = timeSplit[0];
-	let minutes = timeSplit[1];
-	const dataToSend = {
-		[`${id}`]: {
-			nombre: name,
-			producto: product,
-			dependencia: dep ?? 'N/A',
-			cargo: ocupation ?? 'N/A',
-			prestamos: {
+	try {
+		const dateSplited = splitDate(date);
+	    let year = dateSplited[0];
+	    let month = dateSplited[1];
+	    let day = dateSplited[2];
+	    const timeSplit = dateSplited[3].split(':');
+	    let hour = timeSplit[0];
+	    let minutes = timeSplit[1];
+		loading.style.display = 'block';
+		const dataToSend = {
+			devoluciones: {
 				[`${year}-${month}-${day}`]: {
 					[`${hour}-${minutes}`]: {
-						entrega: responsable
+						recibe: name,
+					    observaciones: obs ?? 'N/A'
 					}
 				}
 			}
 		}
-	}
-	try {
-		loading.style.display = 'block';
 		const prestamoRef = doc(db, 'prestamos', `${serial}`);
 		await setDoc(prestamoRef, dataToSend, {merge:true});
 		const equipoRef = doc(db, 'equipos', `${serial}`);
-		await setDoc(equipoRef, {disponible: false, ultimoPrestamo: `${name}_${date}`}, {merge:true});
-		alert(`Se ha creado el préstamo de:\n${product}\nPara:\n${name}`);
+		await setDoc(equipoRef, {disponible: true}, {merge:true});
+		alert(`Se registró la devolución de:\n${product}.`);
 		window.close();
 	} catch (error){
-		alert("Error al prestar el equipo.");
+		alert("Error al devolver el equipo.");
 		console.log(`Error: ${error}`);
 	} finally {
 		loading.style.display = 'none';
 	}
-});
-
-document.querySelector('#cancelar').addEventListener('click', () => {
-	window.close();
 });

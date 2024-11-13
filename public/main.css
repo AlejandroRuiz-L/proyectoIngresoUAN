@@ -67,10 +67,10 @@ body{
 	margin: 0 auto;
 	width: 25%;
 	height: 40px;
-	background: linear-gradient(45deg, #dfbd59, #8a6225);
+	background: linear-gradient(130deg, #dfbd59, #8a6225);
 	border: 1px solid black;
 	border-radius: 20px;
-	box-shadow: 4px 4px 4px;
+	box-shadow: 6px 5px 4px;
 	transition: .7s;
 	font-size: 1.3rem;
 	font-weight: bold;
@@ -78,7 +78,7 @@ body{
 
 .boton:hover{
 	background: linear-gradient(10deg, #dfbd59, #8a6225);
-	box-shadow: 6px 6px 6px;
+	box-shadow: -6px 5px 4px;
 }
 
 .botonAdmin{
@@ -89,6 +89,15 @@ body{
 .btn-flecha{
 	font-size: 1.7rem;
 	width: 20%;
+}
+
+.deleteBtn{
+	background: linear-gradient(130deg, #c11616, #7f1d1d);
+	font-size: 25px;
+}
+
+.deleteBtn:hover{
+	background: linear-gradient(10deg, #7f1d1d, #c11616);
 }
 
 .link{
