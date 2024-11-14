@@ -29,7 +29,6 @@ try {
 const loading = document.querySelector('#loadingOverlay');
 const menu = document.querySelector('#menu');
 const info = document.querySelector('#info');
-const formEdit = document.querySelector('#formEdit');
 const searchBtn = document.querySelector('#buscar');
 const backMenu = document.querySelector('#backMenu');
 
@@ -37,20 +36,17 @@ function showMenu(){
 	menu.style.display = 'block';
 	info.style.display = 'none';
 	backMenu.style.display = 'none';
-	formEdit.style.display = 'none';
 }
 
 function showInfo(){
 	menu.style.display = 'none';
 	info.style.display = 'flex';
 	backMenu.style.display = 'block';
-	formEdit.style.display = 'none';
 }
 
 function showEdit(){
 	menu.style.display = 'none';
 	info.style.display = 'none';
-	formEdit.style.display = 'flex';
 }
 
 backMenu.addEventListener('click', showMenu);
@@ -80,7 +76,7 @@ searchBtn.addEventListener('click', async () => {
 		texto.classList.add('lista-item');
 		texto.innerHTML = `Producto: ${data.producto}\nSerial: ${serial}\nActivo Fijo: ${data.activoFijo}`;
 		texto.innerHTML += `\nEstado: ${data.disponible ? '&#9989; Disponible' : '&#10060; No disponible'}`;
-		const prestamo = data.prestamo.split('_');
+		const prestamo = data.ultimoPrestamo.split('_');
 		texto.innerHTML += data.ultimoPrestamo != 'N/A' ? `\nÚltimo préstamo:\n${prestamo[0]}\n${prestamo[1]}` : '';
 		const toLend = newBtn('prestamo', 'Préstamo', 'prestar');
 		const toReturn = newBtn('devolucion', 'Devolución', 'devolver');
@@ -95,7 +91,7 @@ searchBtn.addEventListener('click', async () => {
 	}
 });
 
-document.querySelector('#agregar').addEventListener('click', () => { window.open('agregar.html', '_blank'); });
+document.querySelector('#agregar').addEventListener('click', () => { window.open('agregarEquipo.html', '_blank'); });
 
 document.querySelector('#reportes').addEventListener('click', () => { window.open('reportesEquipos.html', '_blank'); });
 

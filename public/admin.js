@@ -33,7 +33,7 @@ function mostrarMenu() {
 };
 
 function ocultarMenu() {
-	adminForm.style.display = 'block';
+	adminForm.style.display = 'flex';
 	menu.style.display = 'none';
 	info.innerHTML = '';
 	info.style.display = 'none';

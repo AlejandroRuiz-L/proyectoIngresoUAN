@@ -32,7 +32,7 @@ const menu = document.querySelector('#menu');
 const backMenu = document.querySelector('#backMenu');
 const info = document.querySelector('#info');
 let dataDownload = [];
-const headers = ['FECHA', 'DOCUMENTO', 'NOMBRE', 'CARGO', 'DEPENDENCIA', 'HORA SOLICITUD', 'RESPONSABLE', 'HORA ENTREGA', 'RECIBE', 'OBSERVACIONES'];
+const headers = ['FECHA', 'DOCUMENTO', 'NOMBRE', 'CARGO', 'DEPENDENCIA', 'PRODUCTO', 'ACTIVO FIJO', 'HORA SOLICITUD', 'RESPONSABLE', 'HORA ENTREGA', 'RECIBE', 'OBSERVACIONES'];
 const downloadBtn = document.querySelector('#downloadBtn');
 
 function showMenu(){
@@ -51,6 +51,8 @@ function showInfo(){
 
 backMenu.addEventListener('click', showMenu);
 
+document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
+
 document.querySelector('#buscar').addEventListener('click', async () => {
 	const serial = document.querySelector('#serial').value.trim();
 	
@@ -58,38 +60,64 @@ document.querySelector('#buscar').addEventListener('click', async () => {
 		alert("El campo serial no debe estar vacío.");
 		return;
 	}
-	const docRef = doc(db, 'equipos', `${serial}`);
+	const docRef = doc(db, 'prestamos', `${serial}`);
+	const equipoRef = doc(db, 'equipos', `${serial}`);
 	try {
+		loading.style.display = 'block';
 		const docSnap = await getDoc(docRef);
 		if (!docSnap.exists()){
-			alert("El equipo no se encuentra registrado.");
+			alert("El equipo no cuenta con registros de préstamos.");
 			return;
 		}
+		let totalPeople = 0;
+		let totalLends = 0;
 		const data = docSnap.data();
 		for (let id in data){
-			const product = data[`${id}`].producto;
+			totalPeople += 1;
 			const prestamos = data[`${id}`].prestamos ?? {};
-		    const devoluciones = data[`${id}`].devoluciones ?? {};
-			let rows = [];
+			const devoluciones = data[`${id}`].devoluciones ?? {};
 			for (let date in prestamos){
+				let rows = [];
 				for (let time in prestamos[`${date}`]){//agrega los campos de la fila de acuerdo al encabezado
-				    const timeSplit = time.split('-');
-					let row = [date, id, data[`${id}`].nombre, data[`${id}`].cargo, data[`${id}`].dependencia];
-				    row.push(`${timeSplit[0]}:${timeSplit[1]}`, prestamos[`${date}`][`${time}`].entrega);
+				    totalLends += 1;
+					const timeSplit = time.split('-');
+					let row = [date, id, data[`${id}`].nombre, data[`${id}`].cargo, data[`${id}`].dependencia, `${data[`${id}`].producto}`];
+					row.push(`${data[`${id}`].activoFijo}`, `${timeSplit[0]}:${timeSplit[1]}`, prestamos[`${date}`][`${time}`].entrega);
 					rows.push(row);
-				};//falta validar que no se cruze la info
+				};
 				let counter = 0;
 				for (let time in devoluciones[`${date}`]){
+					console.log(counter);
 					const timeSplit = time.split('-');
 					rows[counter].push(`${timeSplit[0]}:${timeSplit[1]}`, devoluciones[`${date}`][`${time}`].recibe, devoluciones[`${date}`][`${time}`].observaciones);
-				    counter += 1;
+					counter += 1;
 				};
-			};//hay que lograr concatenar las devoluciones
+				for (let row of rows){ dataDownload.push(row) };
+			};
 		};
-		dataDownload.unshift(`Reporte_Equipo_${serial}`, `Producto_${data.producto}`, headers);
+		const equipoSnap = await getDoc(equipoRef);
+		let product;
+		let active;
+		if (equipoSnap.exists()){
+			const dataE = equipoSnap.data();
+			product = dataE.producto;
+			active = dataE.activoFijo;
+		}
+		let textInfo = `${totalPeople} personas prestaron ${totalLends} veces el equipo`;
+		dataDownload.unshift([`Reporte_Equipo_${serial}`], [`Producto_${product ?? 'N/A'}`], [`Activo_fijo_${active ?? 'N/A'}`], [textInfo], headers);
+		textInfo += '\n\nLos datos están listos para descargar.'
+		const texto = document.createElement('p');
+		texto.style.whiteSpace = 'pre-wrap';
+		texto.classList.add('textBorder');
+		texto.textContent = textInfo;
+		info.appendChild(texto);
+		showInfo();
+		console.log(dataDownload);
 	} catch (error){
 		alert("Error al realizar el reporte.");
 		console.log(`Error: ${error}`);
+	} finally {
+		loading.style.display = 'none';
 	}
 });
 

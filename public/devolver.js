@@ -37,7 +37,7 @@ document.querySelector('#cancelar').addEventListener('click', () => { window.clo
 document.querySelector('#formToReturn').addEventListener('submit', async (event) => {
 	event.preventDefault();
 	const id = document.querySelector('#id').value.trim();
-	const date = document.querySelector('#date').value;
+	let date = document.querySelector('#date').value;
 	const name = document.querySelector('#name').value.trim();
 	const obs = document.querySelector('#obs').value.trim();
 	
@@ -66,11 +66,13 @@ document.querySelector('#formToReturn').addEventListener('submit', async (event)
 	    let minutes = timeSplit[1];
 		loading.style.display = 'block';
 		const dataToSend = {
-			devoluciones: {
-				[`${year}-${month}-${day}`]: {
-					[`${hour}-${minutes}`]: {
-						recibe: name,
-					    observaciones: obs ?? 'N/A'
+			[`${id}`]: {
+				devoluciones: {
+					[`${year}-${month}-${day}`]: {
+						[`${hour}-${minutes}`]: {
+							recibe: name,
+							observaciones: obs ? obs : 'N/A'
+						}
 					}
 				}
 			}

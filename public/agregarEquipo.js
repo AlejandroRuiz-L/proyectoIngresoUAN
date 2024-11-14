@@ -1,6 +1,6 @@
 import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore, doc, getDoc, deleteDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 const firebaseConfig = {//firebase PRESTAMOS
   apiKey: "AIzaSyBpQ9kR9pJgFoI8S8h75TXz44DZukk3Z7Q",
@@ -26,49 +26,40 @@ try {
 	window.close();
 }
 
-const labelSerial = document.querySelector('#labelSerial');
-const oldSerial = sessionStorage.getItem('serial');
-labelSerial.textContent += ` ${oldSerial}`;
-const labelProduct = document.querySelector('#labelProduct');
-const oldProduct = sessionStorage.getItem('producto');
-labelProduct.textContent += ` ${oldProduct}`;
-const labelActive = document.querySelector('#labelActive');
-const oldActive = sessionStorage.getItem('activo');
-labelActive.textContent += ` ${oldActive}`;
 const loading = document.querySelector('#loadingOverlay');
+const formAdd = document.querySelector('#formAdd');
 
 document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
 
-document.querySelector('#formEdit').addEventListener('submit', async (event) => {
+formAdd.addEventListener('submit', async (event) => {
 	event.preventDefault();
 	const serial = document.querySelector('#serial').value.trim();
 	const active = document.querySelector('#active').value.trim();
 	const product = document.querySelector('#product').value.trim();
 	
-	if (!serial && !active && !product){
-		alert("No has modificado ningún dato.");
+	if (!serial || !active || !product){
+		alert("Todos los campos son obligatorios.");
 		return;
 	}
-	loading.style.display = 'block';
 	const dataToSend = {
-		activoFijo: active ? active : oldActive,
-		producto: product ? product : oldProduct,
-		ultimoPrestamo: sessionStorage.getItem('lastLend'),
-		disponible: sessionStorage.getItem('enable') === 'true' ? true : false
+		activoFijo: active,
+	    producto: product,
+		disponible: true,
+		ultimoPrestamo: 'N/A'
 	};
-	const isNewSerial = serial ? true : false;
-	const trueSerial = serial ? serial : oldSerial;
-	const trueProduct = product ? product : oldProduct;
-	const docRef = doc(db, 'equipos', `${trueSerial}`);
 	try {
-		if (isNewSerial){
-			await deleteDoc(doc(db, 'equipos', `${oldSerial}`));
+		loading.style.display = 'block';
+		const docRef = doc(db, 'equipos', `${serial}`);
+		const docSnap = await getDoc(docRef);
+		if (docSnap.exists()){
+			alert("El serial ya se encuentra registrado.");
+			return;
 		}
 		await setDoc(docRef, dataToSend, {merge:true});
-		alert(`Se ha editado el equipo:\n${trueProduct}.`);
-    	window.close();
+		alert("Se ha agregado el equipo.");
+		formAdd.reset();
 	} catch (error){
-		alert("Error al editar el equipo.");
+		alert("Error al agregar el equipo.");
 		console.log(`Error: ${error}`);
 	} finally {
 		loading.style.display = 'none';

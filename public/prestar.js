@@ -34,14 +34,14 @@ const loading = document.querySelector('#loadingOverlay');
 
 document.querySelector('#formPrestar').addEventListener('submit', async (event) => {
 	event.preventDefault();
-	const name = document.querySelector('#name').value;
+	const name = document.querySelector('#name').value.trim();
 	let date = document.querySelector('#date').value;
-	const id = document.querySelector('#id').value;
-	const ocupation = document.querySelector('#cargo').value;
-	const dep = document.querySelector('#dependence').value;
-	const responsable = document.querySelector('#responsable').value;
+	const id = document.querySelector('#id').value.trim();
+	const ocupation = document.querySelector('#cargo').value.trim();
+	const dep = document.querySelector('#dependence').value.trim();
+	const responsable = document.querySelector('#responsable').value.trim();
 	
-	if (!name || !isValidName(name)){
+	if (!name || !responsable){
 		alert("Los nombres no pueden estar vacíos.");
 		return;
 	}
@@ -67,8 +67,8 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 		[`${id}`]: {
 			nombre: name,
 			producto: product,
-			dependencia: dep ?? 'N/A',
-			cargo: ocupation ?? 'N/A',
+			dependencia: dep ? dep : 'N/A',
+			cargo: ocupation ? ocupation : 'N/A',
 			prestamos: {
 				[`${year}-${month}-${day}`]: {
 					[`${hour}-${minutes}`]: {

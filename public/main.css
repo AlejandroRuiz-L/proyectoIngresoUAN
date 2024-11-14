@@ -189,6 +189,22 @@ body{
          1px  1px 0 black; /* Efecto de borde */
 }
 
+.logout{
+	position: fixed;
+	top: 50px;
+	left: -10%;
+	transition: 1s;
+	width: 18%;
+}
+
+.logout:hover{
+	left: -2%;
+}
+
+.logoutBtn{
+	width: 100%;
+}
+
 @media (max-width: 770px){
 	.logo{
 		width: 50%;
@@ -260,4 +276,17 @@ body{
 	    width: 350px;
 		padding-left: 0px;
     }
+	
+	.logout{
+		width: 30%;
+		left: -20%;
+	}
+	
+	.logout:hover{
+		left: -9%;
+	}
+	
+	.logoutBtn{
+		width: 100%;
+	}
 }

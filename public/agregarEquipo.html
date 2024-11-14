@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="LogoInstitucionalUANAzul.png" type="image/png">
+  <title>Agregar Equipo</title>
+  <link rel="stylesheet" href="main.css">
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+</head>
+<body>
+  <header class="container caja">
+    <h1 class="textBorder">Agregar Equipo<br>Sede Bucaramanga</h1>
+  </header>
+  <main class="container">
+    <div id="loadingOverlay">Cargando. Por favor, espere...</div>
+	
+	<form class="container form" id="formAdd">
+	  <div>
+	    <label for="serial" class="textBorder">Serial:</label>
+		<input type="text" class="input" id="serial" placeholder="Ingresa el serial">
+	  </div>
+	  
+	  <div>
+	    <label for="active" class="textBorder">Activo fijo:</label>
+		<input type="text" class="input" id="active" placeholder="Ingresa el activo fijo">
+	  </div>
+	  
+	  <div>
+	    <label for="product" class="textBorder">Producto:</label>
+		<input type="text" class="input" id="product" placeholder="Ingresa el tipo de equipo">
+	  </div>
+	  
+	  <button type="submit" class="boton">Agregar</button>
+	  <button type="reset" class="boton">Limipiar</button>
+	  <button type="button" id="cancelar" class="boton">Cancelar</button>
+	</form>
+  </main>
+  <script src="agregarEquipo.js" type="module" defer></script>
+</body>
+</html>
