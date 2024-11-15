@@ -41,14 +41,11 @@ export function isNum(str){
 	return /^\d+$/.test(str);
 }
 
-export function newBtn(id, textC, url){
+export function newBtn(id, textC){
 	const btn = document.createElement('button');
 	btn.id = id;
 	btn.textContent = textC;
 	btn.classList.add("boton");
-	btn.onclick = function (){
-		window.open(`${url}.html`, '_blank');
-	};
 	return btn;
 }
 

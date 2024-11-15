@@ -70,7 +70,7 @@ body{
 	background: linear-gradient(130deg, #dfbd59, #8a6225);
 	border: 1px solid black;
 	border-radius: 20px;
-	box-shadow: 6px 5px 4px;
+	box-shadow: 6px 5px 4px rgb(0, 0, 0, 0.8);
 	transition: .7s;
 	font-size: 1.3rem;
 	font-weight: bold;
@@ -78,7 +78,7 @@ body{
 
 .boton:hover{
 	background: linear-gradient(10deg, #dfbd59, #8a6225);
-	box-shadow: -6px 5px 4px;
+	box-shadow: -6px 5px 4px rgb(0, 0, 0, 0.8);
 }
 
 .botonAdmin{
@@ -163,10 +163,6 @@ body{
     white-space: pre-wrap; /* Mantiene los saltos de línea en el contenido de texto */
 }
 
-.protected-content{
-	display: none;
-}
-
 #loadingOverlay {
     display: none;
     position: fixed;
@@ -189,20 +185,54 @@ body{
          1px  1px 0 black; /* Efecto de borde */
 }
 
-.logout{
-	position: fixed;
-	top: 50px;
-	left: -10%;
-	transition: 1s;
-	width: 18%;
+.logoutContainer {
+    position: fixed;
+    top: 30px;
+    left: -5%;
+    display: flex;
+    justify-content: end;
+	border-radius: 50px;
+	border: 1px solid black;
+	background: #16812d;
+    align-items: center;
+    padding: 0 10px;
+    color: black;
+    width: 120px;
+    height: 40px;
+    transition: 1s;
+	cursor: pointer;
 }
 
-.logout:hover{
-	left: -2%;
+.logout {
+    font-size: 27px;
 }
 
-.logoutBtn{
-	width: 100%;
+.logoutText {
+	margin: auto;
+    font-size: 26px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+/* Aparecer el texto cuando el mouse esté sobre el contenedor */
+.logoutContainer:hover .logoutText {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: .2s;
+	color: black;
+}
+
+.logoutContainer:hover {
+	left: 5px;
+	background: #199734;
+	box-shadow: 6px 5px 4px rgb(0, 0, 0, 0.8);
+	height: 50px;
+	width: 140px;
+}
+
+.protected-content{
+	display: none;
 }
 
 @media (max-width: 770px){

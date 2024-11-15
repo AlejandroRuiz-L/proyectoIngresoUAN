@@ -24,12 +24,15 @@ try {
 } catch (error){
 	console.log(`Error: ${error}`);
 	alert("Ocurrió un error al obtener las credenciales.");
-	window.close();
+	window.location.href = "admin.html";
 }
-const product = sessionStorage.getItem('producto');
+
+const producto = sessionStorage.getItem('producto');
+const marca = sessionStorage.getItem('marca');
+const modelo = sessionStorage.getItem('modelo');
 const serial = sessionStorage.getItem('serial');
 const title = document.querySelector('#titulo');
-title.textContent = `${capitalize(product)}`;
+title.textContent = capitalize(producto) + ' ' + capitalize(marca);
 const loading = document.querySelector('#loadingOverlay');
 
 document.querySelector('#formPrestar').addEventListener('submit', async (event) => {
@@ -40,6 +43,7 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 	const ocupation = document.querySelector('#cargo').value.trim();
 	const dep = document.querySelector('#dependence').value.trim();
 	const responsable = document.querySelector('#responsable').value.trim();
+	const obs = document.querySelector('#obs').value.trim();
 	
 	if (!name || !responsable){
 		alert("Los nombres no pueden estar vacíos.");
@@ -66,13 +70,16 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 	const dataToSend = {
 		[`${id}`]: {
 			nombre: name,
-			producto: product,
+			producto: producto,
+			marca: marca,
+			modelo: modelo,
 			dependencia: dep ? dep : 'N/A',
 			cargo: ocupation ? ocupation : 'N/A',
 			prestamos: {
 				[`${year}-${month}-${day}`]: {
 					[`${hour}-${minutes}`]: {
-						entrega: responsable
+						entrega: responsable,
+						observaciones: obs ? obs : 'N/A'
 					}
 				}
 			}
@@ -84,7 +91,7 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 		await setDoc(prestamoRef, dataToSend, {merge:true});
 		const equipoRef = doc(db, 'equipos', `${serial}`);
 		await setDoc(equipoRef, {disponible: false, ultimoPrestamo: `${name}_${date}`}, {merge:true});
-		alert(`Se ha creado el préstamo de:\n${product}\nPara:\n${name}`);
+		alert(`Se ha creado el préstamo de:\n${producto} ${marca}\nPara:\n${name}`);
 		window.close();
 	} catch (error){
 		alert("Error al prestar el equipo.");

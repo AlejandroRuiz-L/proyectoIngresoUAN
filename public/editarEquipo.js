@@ -23,15 +23,21 @@ try {
 } catch (error){
 	console.log(`Error: ${error}`);
 	alert("Ocurrió un error al obtener las credenciales.");
-	window.close();
+	window.location.href = "admin.html";
 }
 
 const labelSerial = document.querySelector('#labelSerial');
 const oldSerial = sessionStorage.getItem('serial');
 labelSerial.textContent += ` ${oldSerial}`;
-const labelProduct = document.querySelector('#labelProduct');
-const oldProduct = sessionStorage.getItem('producto');
-labelProduct.textContent += ` ${oldProduct}`;
+const labelProducto = document.querySelector('#labelProducto');
+const oldProducto = sessionStorage.getItem('producto');
+labelProducto.textContent += ` ${oldProducto}`;
+const labelMarca = document.querySelector('#labelMarca');
+const oldMarca = sessionStorage.getItem('marca');
+labelMarca.textContent += ` ${oldMarca}`;
+const labelModelo = document.querySelector('#labelModelo');
+const oldModelo = sessionStorage.getItem('modelo');
+labelModelo.textContent += ` ${oldModelo}`;
 const labelActive = document.querySelector('#labelActive');
 const oldActive = sessionStorage.getItem('activo');
 labelActive.textContent += ` ${oldActive}`;
@@ -42,35 +48,50 @@ document.querySelector('#cancelar').addEventListener('click', () => { window.clo
 document.querySelector('#formEdit').addEventListener('submit', async (event) => {
 	event.preventDefault();
 	const serial = document.querySelector('#serial').value.trim();
+	const producto = document.querySelector('#producto').value.trim();
 	const active = document.querySelector('#active').value.trim();
-	const product = document.querySelector('#product').value.trim();
+	const marca = document.querySelector('#marca').value.trim();
+	const modelo = document.querySelector('#modelo').value.trim();
 	
-	if (!serial && !active && !product){
+	if (!serial && !producto && !active && !marca && !modelo){
 		alert("No has modificado ningún dato.");
 		return;
 	}
 	loading.style.display = 'block';
 	const dataToSend = {
 		activoFijo: active ? active : oldActive,
-		producto: product ? product : oldProduct,
+		producto: producto ? producto : oldProducto,
+		marca: marca ? marca : oldMarca,
+		modelo: modelo ? modelo : oldModelo,
 		ultimoPrestamo: sessionStorage.getItem('lastLend'),
 		disponible: sessionStorage.getItem('enable') === 'true' ? true : false
 	};
 	const isNewSerial = serial ? true : false;
 	const trueSerial = serial ? serial : oldSerial;
-	const trueProduct = product ? product : oldProduct;
+	const trueProducto = producto ? producto : oldProducto;
+	const trueMarca = marca ? marca : oldMarca;
 	const docRef = doc(db, 'equipos', `${trueSerial}`);
 	try {
 		if (isNewSerial){
 			await deleteDoc(doc(db, 'equipos', `${oldSerial}`));
 		}
 		await setDoc(docRef, dataToSend, {merge:true});
-		alert(`Se ha editado el equipo:\n${trueProduct}.`);
+		alert(`Se ha editado el equipo:\n${trueProducto} ${trueMarca}`);
     	window.close();
 	} catch (error){
 		alert("Error al editar el equipo.");
 		console.log(`Error: ${error}`);
 	} finally {
 		loading.style.display = 'none';
+	}
+});
+
+document.querySelector('#trash').addEventListener('click', async () => {
+	const deleteConfirm = confirm(`${oldProducto} ${oldMarca}\nserá eliminado de la base de datos.\nDeseas continuar?`);
+	if (deleteConfirm){
+		const docRef = doc(db, 'equipos', `${oldSerial}`);
+		await deleteDoc(docRef);
+		alert(`Se eliminó el equipo ${oldProducto} ${oldMarca}`);
+		window.close();
 	}
 });

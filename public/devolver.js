@@ -24,12 +24,13 @@ try {
 } catch (error){
 	console.log(`Error: ${error}`);
 	alert("Ocurrió un error al obtener las credenciales.");
-	window.close();
+	window.location.href = "admin.html";
 }
-const product = sessionStorage.getItem('producto');
+const marca = sessionStorage.getItem('marca');
+const producto = sessionStorage.getItem('producto');
 const serial = sessionStorage.getItem('serial');
 const title = document.querySelector('#titulo');
-title.textContent = `${capitalize(product)}`;
+title.textContent = capitalize(producto) + ' ' + capitalize(marca);
 const loading = document.querySelector('#loadingOverlay');
 
 document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
@@ -81,7 +82,7 @@ document.querySelector('#formToReturn').addEventListener('submit', async (event)
 		await setDoc(prestamoRef, dataToSend, {merge:true});
 		const equipoRef = doc(db, 'equipos', `${serial}`);
 		await setDoc(equipoRef, {disponible: true}, {merge:true});
-		alert(`Se registró la devolución de:\n${product}.`);
+		alert(`Se registró la devolución de:\n${producto} ${marca}`);
 		window.close();
 	} catch (error){
 		alert("Error al devolver el equipo.");

@@ -24,6 +24,7 @@ try {
 } catch (error){
 	console.log(`Error: ${error}`);
 	alert("Ocurrió un error al obtener las credenciales.");
+	window.location.href = "admin.html";
 }
 
 const loading = document.querySelector('#loadingOverlay');
@@ -68,19 +69,21 @@ searchBtn.addEventListener('click', async () => {
 		}
 		const data = docSnap.data();
 		sessionStorage.setItem('producto', `${data.producto}`);
+		sessionStorage.setItem('marca', `${data.marca}`);
+		sessionStorage.setItem('modelo', `${data.modelo}`);
 		sessionStorage.setItem('serial', `${serial}`);
 		sessionStorage.setItem('activo', `${data.activoFijo}`);
 		sessionStorage.setItem('lastLend', `${data.ultimoPrestamo}`);
 		sessionStorage.setItem('enable', `${data.disponible}`);
 		const texto = document.createElement('p');
 		texto.classList.add('lista-item');
-		texto.innerHTML = `Producto: ${data.producto}\nSerial: ${serial}\nActivo Fijo: ${data.activoFijo}`;
+		texto.innerHTML = `Producto: ${data.producto}\nModelo: ${data.modelo}\nMarca: ${data.marca}\nSerial: ${serial}\nActivo Fijo: ${data.activoFijo}`;
 		texto.innerHTML += `\nEstado: ${data.disponible ? '&#9989; Disponible' : '&#10060; No disponible'}`;
 		const prestamo = data.ultimoPrestamo.split('_');
 		texto.innerHTML += data.ultimoPrestamo != 'N/A' ? `\nÚltimo préstamo:\n${prestamo[0]}\n${prestamo[1]}` : '';
-		const toLend = newBtn('prestamo', 'Préstamo', 'prestar');
-		const toReturn = newBtn('devolucion', 'Devolución', 'devolver');
-		const edit = newBtn('editar', 'Editar', 'editarEquipo');
+		const toLend = newBtn('prestamo', 'Préstamo');
+		const toReturn = newBtn('devolucion', 'Devolución');
+		const edit = newBtn('editar', 'Editar');
 		info.append(texto, toLend, toReturn, edit);
 		showInfo();
 	} catch (error){
@@ -89,6 +92,29 @@ searchBtn.addEventListener('click', async () => {
 	} finally {
 		loading.style.display = 'none';
 	}
+});
+
+document.querySelector('#info').addEventListener('click', (event) => {
+	const enable = sessionStorage.getItem('enable');
+	if (event.target.id === 'prestamo'){
+		if (enable === 'true'){
+			window.location.href = 'prestar.html';
+		} else {
+			alert("El equipo no está disponible para prestar.");
+			return;
+		}
+	}
+	
+	if (event.target.id === 'devolucion'){
+		if (enable === 'false'){
+			window.location.href = 'devolver.html';
+		} else {
+			alert("El equipo ya fue devuelto.\nEstá disponible para préstamo.");
+			return;
+		}
+	}
+	
+	if (event.target.id === 'editar'){ window.location.href = 'editarEquipo.html'; }
 });
 
 document.querySelector('#agregar').addEventListener('click', () => { window.open('agregarEquipo.html', '_blank'); });

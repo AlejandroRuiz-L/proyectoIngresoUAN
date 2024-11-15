@@ -24,7 +24,7 @@ try {
 } catch (error){
 	console.log(`Error: ${error}`);
 	alert("Ocurrió un error al obtener las credenciales.");
-	window.close();
+	window.location.href = "admin.html";
 }
 
 const loading = document.querySelector('#loadingOverlay');
@@ -32,11 +32,11 @@ const menu = document.querySelector('#menu');
 const backMenu = document.querySelector('#backMenu');
 const info = document.querySelector('#info');
 let dataDownload = [];
-const headers = ['FECHA', 'DOCUMENTO', 'NOMBRE', 'CARGO', 'DEPENDENCIA', 'PRODUCTO', 'ACTIVO FIJO', 'HORA SOLICITUD', 'RESPONSABLE', 'HORA ENTREGA', 'RECIBE', 'OBSERVACIONES'];
+const headers = ['FECHA', 'DOCUMENTO', 'NOMBRE', 'CARGO', 'DEPENDENCIA', 'PRODUCTO', 'HORA SOLICITUD', 'RESPONSABLE', 'OBSERVACIONES', 'HORA ENTREGA', 'RECIBE', 'OBSERVACIONES'];
 const downloadBtn = document.querySelector('#downloadBtn');
 
 function showMenu(){
-	menu.style.display = 'block';
+	menu.style.display = 'flex';
 	backMenu.style.display = 'none';
 	info.style.display = 'none';
 	downloadBtn.style.display = 'none';
@@ -81,8 +81,8 @@ document.querySelector('#buscar').addEventListener('click', async () => {
 				for (let time in prestamos[`${date}`]){//agrega los campos de la fila de acuerdo al encabezado
 				    totalLends += 1;
 					const timeSplit = time.split('-');
-					let row = [date, id, data[`${id}`].nombre, data[`${id}`].cargo, data[`${id}`].dependencia, `${data[`${id}`].producto}`];
-					row.push(`${data[`${id}`].activoFijo}`, `${timeSplit[0]}:${timeSplit[1]}`, prestamos[`${date}`][`${time}`].entrega);
+					let row = [date, id, data[`${id}`].nombre, data[`${id}`].cargo, data[`${id}`].dependencia, `${data[`${id}`].producto} ${data[`${id}`].marca} ${data[`${id}`].modelo}`];
+					row.push(`${timeSplit[0]}:${timeSplit[1]}`, prestamos[`${date}`][`${time}`].entrega, prestamos[`${date}`][`${time}`].observaciones);
 					rows.push(row);
 				};
 				let counter = 0;
@@ -98,14 +98,18 @@ document.querySelector('#buscar').addEventListener('click', async () => {
 		const equipoSnap = await getDoc(equipoRef);
 		let product;
 		let active;
+		let marca;
+		let modelo;
 		if (equipoSnap.exists()){
 			const dataE = equipoSnap.data();
 			product = dataE.producto;
 			active = dataE.activoFijo;
+			marca = dataE.marca;
+			modelo = dataE.modelo;
 		}
 		let textInfo = `${totalPeople} personas prestaron ${totalLends} veces el equipo`;
-		dataDownload.unshift([`Reporte_Equipo_${serial}`], [`Producto_${product ?? 'N/A'}`], [`Activo_fijo_${active ?? 'N/A'}`], [textInfo], headers);
-		textInfo += '\n\nLos datos están listos para descargar.'
+		dataDownload.unshift([`Reporte_Equipo_${serial}`], [`Producto_${product ?? 'N/A'}_Marca_${marca ?? 'N/A'}_Modelo_${modelo ?? 'N/A'}`], [`Activo_fijo_${active ?? 'N/A'}`], [textInfo], headers);
+		textInfo += '\n\nEl reporte está listo para descargar.'
 		const texto = document.createElement('p');
 		texto.style.whiteSpace = 'pre-wrap';
 		texto.classList.add('textBorder');

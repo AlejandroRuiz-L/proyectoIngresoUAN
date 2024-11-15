@@ -9,7 +9,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header>
+  <div id="logoutContainer" class="logoutContainer protected-content">
+	  <span class="logoutText">Salir</span>
+	  <span class="logout"><i class="fas fa-sign-out-alt"></i></span>
+  </div>
+  
+  <header id="header">
     <div class="caja">
       <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
   
@@ -17,8 +22,6 @@
 	  
       <button class="boton btn-flecha" id="home"><a href="index.html" class="link"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
     </div>
-	
-	<div class="logout"><button id="logout" class="logoutBtn boton protected-content">Salir <i class="fas fa-sign-out-alt"></i></button></div>
   </header>
   <main class="container">
     <form id="admin-form" class="container form">

@@ -35,15 +35,19 @@ formAdd.addEventListener('submit', async (event) => {
 	event.preventDefault();
 	const serial = document.querySelector('#serial').value.trim();
 	const active = document.querySelector('#active').value.trim();
-	const product = document.querySelector('#product').value.trim();
+	const producto = document.querySelector('#producto').value.trim();
+	const marca = document.querySelector('#marca').value.trim();
+	const modelo = document.querySelector('#modelo').value.trim();
 	
-	if (!serial || !active || !product){
-		alert("Todos los campos son obligatorios.");
+	if (!serial || !producto || !marca || !modelo){
+		alert("Los campos marcados con '*' son obligatorios.");
 		return;
 	}
 	const dataToSend = {
 		activoFijo: active,
-	    producto: product,
+		producto: producto,
+	    marca: marca,
+		modelo: modelo,
 		disponible: true,
 		ultimoPrestamo: 'N/A'
 	};
@@ -56,7 +60,7 @@ formAdd.addEventListener('submit', async (event) => {
 			return;
 		}
 		await setDoc(docRef, dataToSend, {merge:true});
-		alert("Se ha agregado el equipo.");
+		alert(`Se ha agregado el equipo:\n${producto} ${marca}`);
 		formAdd.reset();
 	} catch (error){
 		alert("Error al agregar el equipo.");

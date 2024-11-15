@@ -18,7 +18,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const adminForm = document.querySelector('#admin-form');
-const logout = document.querySelector('#logout');
+const logout = document.querySelector('#logoutContainer');
 const loading = document.querySelector('#loadingOverlay');
 const menu = document.querySelector('#menu');
 const backMenu = document.querySelector('#backMenu');
@@ -68,10 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {//inicio de sesion admin
 			await signInWithEmailAndPassword(auth, email, passwordUser);
 			mostrarMenu();
 			adminForm.reset();
-			document.querySelector('#logoUAN').style.display = 'none';
-			document.querySelector('#titulo').style.display = 'none';
-			logout.style.display = 'block';
-			document.querySelector('#home').style.display = 'none';
+			document.querySelector('#header').style.display = 'none';
+			logout.style.display = 'flex';
 			downloadBTN.style.display = 'none';
 			info.innerHTML = 'Cargando...';
 			info.style.display = 'flex';
@@ -245,16 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {//inicio de sesion admin
 });
 
 // Maneja el cierre de sesión
-document.getElementById('logout').addEventListener('click', async () => {
+logout.addEventListener('click', async () => {
     try {
         await signOut(auth);
 		localStorage.clear();
 		sessionStorage.clear();
 		ocultarMenu();
-		document.querySelector('#logoUAN').style.display = 'block';
-		document.querySelector('#titulo').style.display = 'block';
+		document.querySelector('#header').style.display = 'block';
 		logout.style.display = 'none';
-		document.querySelector('#home').style.display = 'block';
 		backMenu.style.display = 'none';
     } catch (error) {
         console.error('Error al cerrar sesión:', error.message);
