@@ -1,7 +1,7 @@
 import { getAuth, signOut, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
 import { getFirestore, doc, getDoc, setDoc} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { dateTimeToServerTime, isValidName } from './functionsDate.js';
+import { dateTimeToServerTime, isValidName, isNum } from './functionsDate.js';
 
 // Configura Firebase
 const firebaseConfig = {
@@ -31,10 +31,7 @@ try {
 	console.log(`Error: ${error}`);
 }
 //&#128584;emoji
-const logo = document.querySelector('#logoUAN');
 const title = document.querySelector('#titulo');
-const titleIngreso = document.querySelector('#tituloIngreso');
-const titleRegistro = document.querySelector('#tituloRegistro');
 const menu = document.querySelector('#menu');
 const loading = document.querySelector('#loadingOverlay');
 //loading.innerHTML = 'Bloqueado temporalmente...';
@@ -53,10 +50,6 @@ backMenu.addEventListener('click', () => {
 	formRegistro.reset();
 	formRegistro.style.display = 'none';
 	menu.style.display = 'flex';
-	logo.style.display = 'block';
-	title.style.display = 'block';
-	titleIngreso.style.display = 'none';
-	titleRegistro.style.display = 'none';
 	backMenu.style.display = 'none';
 });
 
@@ -67,19 +60,13 @@ function inOutHidden(){
 }
 
 document.querySelector('#ingreso').addEventListener('click', () => {
-	logo.style.display = 'none';
-	title.style.display = 'none';
 	menu.style.display = 'none';
-	titleIngreso.style.display = 'block';
 	backMenu.style.display = 'block';
 	formIngreso.style.display = 'block';
 });
 
 document.querySelector('#registro').addEventListener('click', () => {
-	logo.style.display = 'none';
-	title.style.display = 'none';
 	menu.style.display = 'none';
-	titleRegistro.style.display = 'block';
 	backMenu.style.display = 'block';
 	formRegistro.style.display = 'flex';
 });
@@ -96,7 +83,7 @@ formIngreso.addEventListener('submit', async (event) => {
 	event.preventDefault();
 	const id = document.querySelector('#userId').value.trim();
 
-	if (!id || !/^\d+$/.test(id)){
+	if (!id || !isNum(id)){
 		alert("Debes ingresar un número válido.");
 		return;
 	}
@@ -217,7 +204,7 @@ formRegistro.addEventListener('submit', async (event) => {
 	const visitor = document.querySelector('#visitante').value;
 	const dateTime = document.querySelector('#fechaIngreso').value;
 	
-	if (!name || !id || !dateTime){
+	if (!name || !id || !dateTime || !typeId || !visitor){
 		alert("Los campos marcados con '*' son obligatorios.");
 		return;
 	}
@@ -225,7 +212,7 @@ formRegistro.addEventListener('submit', async (event) => {
 		alert("El nombre no puede contener números ni simbolos.");
 		return;
 	}
-	if (!/^\d+$/.test(id)){
+	if (!isNum(id)){
 		alert("El número de identificación no es válido.");
 		return;
 	}

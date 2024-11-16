@@ -33,7 +33,7 @@ const title = document.querySelector('#titulo');
 title.textContent = capitalize(producto) + ' ' + capitalize(marca);
 const loading = document.querySelector('#loadingOverlay');
 
-document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
+document.querySelector('#cancelar').addEventListener('click', () => { window.history.back(); });
 
 document.querySelector('#formToReturn').addEventListener('submit', async (event) => {
 	event.preventDefault();

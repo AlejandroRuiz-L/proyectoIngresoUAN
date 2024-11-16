@@ -249,7 +249,7 @@ logout.addEventListener('click', async () => {
 		localStorage.clear();
 		sessionStorage.clear();
 		ocultarMenu();
-		document.querySelector('#header').style.display = 'block';
+		document.querySelector('#header').style.display = 'flex';
 		logout.style.display = 'none';
 		backMenu.style.display = 'none';
     } catch (error) {
@@ -380,7 +380,7 @@ document.querySelector('#reportes').addEventListener('click', () => {
 });
 
 document.querySelector('#novedades').addEventListener('click', () => {
-	window.open("registroAdmin.html", "_blank");
+	window.open("novedades.html", "_blank");
 });
 
 document.querySelector('#prestamos').addEventListener('click', () => {

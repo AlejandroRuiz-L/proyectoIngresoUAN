@@ -9,34 +9,36 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header class="container caja">
-    <h1 class="textBorder">Préstamo de Equipos<br>Sede Bucaramanga</h1>
+  <header class="header">
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titleHeader textBorder" id="titulo">Préstamo de Equipos<br>Sede Bucaramanga</h1>
+	
+	<div class="logo"><button class="boton botonHeader" id="cancelar" title="Salir"><i class="fas fa-sign-out-alt"></i></button></div>
   </header>
+  
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
   
     <div id="menu">
 	  <div class="caja">
-		  <h2 class="textBorder" style="margin-top: 15px;">Buscar Equipo</h2>
-		  <label class="textBorder">Serial:</label>
+		  <h3 class="textBorder" style="margin-top: 15px;">Buscar Equipo</h3>
 		  <input type="text" id="serial" class="input" placeholder="Serial del Equipo">
 		  <button class="boton" id="buscar" title="Buscar"><i class="fas fa-search" style="font-size: 27px;"></i></button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h2 class="textBorder" style="margin-top: 15px;">Agregar Equipo</h2>
+	    <h3 class="textBorder" style="margin-top: 15px;">Agregar Equipo</h3>
 	    <button class="boton" id="agregar" title="Agregar"><i class="fas fa-list" style="font-size: 27px;"></i></button>
 	  </div>
 	  
 	  <div class="caja">
-	    <h2 class="textBorder" style="margin-top: 15px;">Reportes</h2>
+	    <h3 class="textBorder" style="margin-top: 15px;">Reportes</h3>
 		<button class="boton" id="reportes" title="Reportes"><i class="fas fa-pencil" style="font-size: 27px"></i></button>
 	  </div>
-		
-	  <br><button class="boton" id="cancelar">Salir</button>
 	</div>
 	
-	<button class="boton btn-flecha protected-content" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>
 	
 	<div class="caja protected-content" id="info"></div>
   </main>

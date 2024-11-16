@@ -9,26 +9,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header class="caja">
-	<img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
-	<h1 class="titulo textBorder" id="titulo">Control de Novedades<br>Sede Bucaramanga</h1>
-	<h2 class="protected-content titulo textBorder" id="tituloIngreso">Ingresos y Salidas</h2>
-	<h2 class="protected-content titulo textBorder" id="tituloRegistro">Formulario de Registro</h2>
+  <header class="header">
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titleHeader textBorder" id="titulo">Control de Novedades<br>Sede Bucaramanga</h1>
+	
+	<div class="logo"><button class="boton botonHeader" id="cancelar" title="Salir"><i class="fas fa-sign-out-alt"></i></button></div>
   </header>
+  
   <main class="container">
     <div id="menu" class="caja">
 	  <h3 class="textBorder" style="margin-top: 10px;">Ingresos y Salidas</h3>
 	  <button class="boton" id="ingreso"><i class="fas fa-exchange-alt" style="font-size: 27px;"></i></button>
 	  <h3 class="textBorder" style="margin-top: 10px;">Registrar Usuarios</h3>
 	  <button class="boton" id="registro"><i class="fas fa-users" style="font-size: 27px;"></i></button>
-	  <br><button class="boton" id="cancelar">Cancelar</button>
 	</div>
-	<button class="protected-content boton btn-flecha" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	<button class="protected-content boton btn-flecha" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>
 	<div id="loadingOverlay">Cargando. Por favor espere...</div>
 	
 	<form class="protected-content form" id="formIngreso">
-	  <label for="userId" class="label textBorder">Identificación:</label>
-	  <input type="text" id="userId" class="input" autocomplete="off" placeholder="Número de Identificación">
+	  <label for="userId" class="label textBorder">Documento:</label>
+	  <input type="text" id="userId" class="input" autocomplete="off" placeholder="Número de Documento">
 	  
 	  <button type="submit" class="boton" id="ingresar">Buscar</button>
 	</form>
@@ -47,23 +48,25 @@
 	<form class="protected-content form container" id="formRegistro">
 	  <div>
 	  <label for="nombre" class="label textBorder">* Nombre:</label>
-	  <input type="text" id="nombre" class="input" placeholder="Nombre Completo" autocomplete="off" required >
+	  <input type="text" id="nombre" class="input" placeholder="Nombre Completo" autocomplete="off" >
       </div>
 	  
 	  <div>
-	  <label for="tipoId" class="label textBorder">Tipo de documento:</label>
-      <select id="tipoId" class="input">>
-		<option value="C.C">C.C</option>>
+	  <label for="tipoId" class="label textBorder">* Tipo de documento:</label>
+      <select id="tipoId" class="input">
+	    <option value="">- Seleccionar documento -</option>
+		<option value="C.C">C.C</option>
       	<option value="C.E">C.E</option>
       	<option value="T.I">T.I</option>
       	<option value="PA">PA</option>
       	<option value="PEP">PEP</option>
+		<option value="OTRO">OTRO</option>
       </select>
 	  </div>
 	  
 	  <div>
       <label for="identificacion" class="label textBorder">* Identificación:</label>
-      <input type="text" id="identificacion" class="input" placeholder="Número de Identificación" autocomplete="off" required >
+      <input type="text" id="identificacion" class="input" placeholder="Número de Identificación" autocomplete="off">
 	  </div>
 	  
 	  <div>
@@ -72,8 +75,9 @@
 	  </div>
 	  
 	  <div>
-      <label for="visitante" class="label textBorder">Tipo de visitante:</label>
+      <label for="visitante" class="label textBorder">* Tipo de Acceso:</label>
       <select id="visitante" class="input">
+	    <option value="">- Seleccionar Tipo -</option>
         <option value="Administrativo">Administrativo</option>
         <option value="Profesor">Profesor</option>
         <option value="Estudiante">Estudiante</option>
@@ -91,6 +95,6 @@
       <button type="reset" class="boton">Limpiar</button>
 	</form>
 </main>
-<script src="registroAdmin.js" type="module" defer></script>
+<script src="novedades.js" type="module" defer></script>
 </body>
 </html>

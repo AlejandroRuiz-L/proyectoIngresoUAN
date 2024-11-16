@@ -9,19 +9,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header class="container caja">
-    <h1 class="textBorder">Reportes de Equipos<br>Sede Bucaramanga</h1>
+  <header class="header">
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titleHeader textBorder" id="titulo">Reportes de Equipos</h1>
+	
+	<div class="logo"><button class="boton botonHeader" id="cancelar" title="Salir"><i class="fas fa-sign-out-alt"></i></button></div>
   </header>
+  
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
 	
-	<h2 class="textBorder">Realiza un reporte completo<br>de los préstamos de un equipo</h2>
-	
 	<div class="caja" id="menu">
-	  <label for="serial" class="textBorder">Serial:</label>
+	  <label for="serial" class="textBorder">Reporte de Equipo:</label>
 	  <input id="serial" class="input" type="text" placeholder="Serial del Equipo">
 	  <button id="buscar" class="boton" title="buscar"><i class="fas fa-search" style="font-size: 27px;"></i></button>
-	  <br><button id="cancelar" class="boton">Cancelar</button>
 	</div>
 	
 	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>

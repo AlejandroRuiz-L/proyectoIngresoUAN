@@ -14,14 +14,18 @@
 	  <span class="logout"><i class="fas fa-sign-out-alt"></i></span>
   </div>
   
-  <header id="header">
-    <div class="caja">
+  <header id="header" class="header">
       <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
   
-      <h1 class="titulo textBorder" id="titulo">Administración de Novedades<br>Sede Bucaramanga</h1>
+      <h1 class="titleHeader textBorder" id="titulo">Administración de Novedades<br>Sede Bucaramanga</h1>
 	  
-      <button class="boton btn-flecha" id="home"><a href="index.html" class="link"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
-    </div>
+      <div class="logo">
+	    <button class="boton botonHeader" id="home" title="Inicio">
+		  <a href="index.html" class="link">
+		    <i style="font-size: 25px;" class="fas fa-house"></i>
+		  </a>
+		</button>
+	  </div>
   </header>
   <main class="container">
     <form id="admin-form" class="container form">
@@ -63,7 +67,7 @@
 	  </div>
 	</div>
 	
-	<button class="boton btn-flecha protected-content" id="backMenu"><i class="fas fa-arrow-left"></i></button>
+	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>
 
 	<div id="loadingOverlay">Cargando, por favor espere...</div>
 	

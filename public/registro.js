@@ -10,12 +10,8 @@ document.querySelector('#formIngreso').addEventListener('submit', async (event) 
 	const tel  = document.querySelector('#telefono').value.trim();
 	const typeVisitor = document.querySelector('#visitante').value;
 	
-	if(!name || !numId){
-		alert('El nombre y la identificación son obligatorios');
-		return;
-	}
-	if (!typeId){
-		alert("Debes seleccionar un tipo de documento.");
+	if(!name || !numId || !typeId || !typeVisitor){
+		alert("Los campos marcados con '*' son obligatorios.");
 		return;
 	}
 	if (!isValidName(name)){

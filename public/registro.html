@@ -9,17 +9,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <header id="header" class="header">
+      <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+      <h1 class="titleHeader textBorder" id="titulo">Registro de usuarios<br>Sede Bucaramanga</h1>
+	  
+      <div class="logo">
+	    <button class="boton botonHeader" id="home">
+		  <a href="index.html" class="link">
+		    <i style="font-size: 25px;" class="fas fa-house"></i>
+		  </a>
+		</button>
+	  </div>
+  </header>
+  
   <main>
     <div id="loadingOverlay">Cargando, por favor espere...</div>
     <form id="formIngreso" class="form container">
-	  <h1 class="titulo textBorder">Formulario de ingreso</h1>
 	  <div>
-	    <label for="nombre" class="textBorder">Nombre:</label>
+	    <label for="nombre" class="textBorder">* Nombre:</label>
 	    <input type="text" id="nombre" class="input" placeholder="Nombre Completo" autocomplete="off" required >
 	  </div>
 	  
 	  <div>
-	    <label for="tipoId" class="textBorder">Documento:</label>
+	    <label for="tipoId" class="textBorder">* Documento:</label>
 		<select id="tipoId" class="input">
 		  <option value="">- Tipo de Documento -</option>
 		  <option value="C.C">C.C</option>
@@ -32,8 +45,8 @@
 	  </div>
 	  
 	  <div>
-	    <label for="identificacion" class="textBorder">Identificación:</label>
-		<input type="text" id="identificacion" class="input" placeholder="Número de documento" autocomplete="off" required >
+	    <label for="identificacion" class="textBorder">* Identificación:</label>
+		<input type="text" id="identificacion" class="input" placeholder="Número de Identificación" autocomplete="off" required >
 	  </div>
 	  
 	  <div>
@@ -42,7 +55,7 @@
 	  </div>
       
 	  <div>
-	    <label for="visitante" class="textBorder">Tipo de Acceso:</label>
+	    <label for="visitante" class="textBorder">* Tipo de Acceso:</label>
 		<select id="visitante" class="input">
 		  <option value="">- Seleccionar Tipo -</option>
 		  <option value="Administrativo">Administrativo</option>
@@ -58,9 +71,6 @@
 	  <button type="submit" class="boton">Registrar</button>
 	  <button type="reset" class="boton">Limpiar</button>
 	</form>
-	
-	<button class="boton btn-flecha"><a href="index.html" class="link"><i style="font-size: 25px;" class="fas fa-house"></i></a></button>
-	
   </main>
   <script type="module" src="registro.js" defer ></script>
 </body>

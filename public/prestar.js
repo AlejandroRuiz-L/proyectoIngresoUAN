@@ -45,8 +45,8 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 	const responsable = document.querySelector('#responsable').value.trim();
 	const obs = document.querySelector('#obs').value.trim();
 	
-	if (!name || !responsable){
-		alert("Los nombres no pueden estar vacíos.");
+	if (!name || !responsable || !ocupation || !dep){
+		alert("Los campos marcados con '*' son obligatorios.");
 		return;
 	}
 	if (!isValidName(responsable) || !isValidName(name)){
@@ -101,6 +101,4 @@ document.querySelector('#formPrestar').addEventListener('submit', async (event) 
 	}
 });
 
-document.querySelector('#cancelar').addEventListener('click', () => {
-	window.close();
-});
+document.querySelector('#cancelar').addEventListener('click', () => { window.history.back(); });

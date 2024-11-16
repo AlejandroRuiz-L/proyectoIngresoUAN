@@ -84,7 +84,11 @@ searchBtn.addEventListener('click', async () => {
 		const toLend = newBtn('prestamo', 'Préstamo');
 		const toReturn = newBtn('devolucion', 'Devolución');
 		const edit = newBtn('editar', 'Editar');
-		info.append(texto, toLend, toReturn, edit);
+		const divButtons = document.createElement('div');
+		divButtons.style.display = 'flex';
+		divButtons.style.margin = '15px 0';
+		divButtons.append(toLend, toReturn, edit);
+		info.append(texto, divButtons);
 		showInfo();
 	} catch (error){
 		alert("Error al buscar el equipo.");

@@ -43,7 +43,7 @@ const oldActive = sessionStorage.getItem('activo');
 labelActive.textContent += ` ${oldActive}`;
 const loading = document.querySelector('#loadingOverlay');
 
-document.querySelector('#cancelar').addEventListener('click', () => { window.close(); });
+document.querySelector('#cancelar').addEventListener('click', () => { window.history.back(); });
 
 document.querySelector('#formEdit').addEventListener('submit', async (event) => {
 	event.preventDefault();

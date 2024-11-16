@@ -9,9 +9,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header class="container caja">
-    <h1 class="textBorder">Edición de Equipo<br>Sede Bucaramanga</h1>
+  <header class="header">
+    <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
+  
+    <h1 class="titleHeader textBorder" id="titulo">Edición de Equipo</h1>
+	
+	<div class="logo"><button class="boton botonHeader" id="cancelar" title="Salir"><i class="fas fa-sign-out-alt"></i></button></div>
   </header>
+  
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
 	
@@ -44,7 +49,6 @@
 	  <div class="caja">
 	    <button type="submit" class="boton">Editar</button>
 	    <button type="reset" class="boton">Limpiar</button>
-	    <button type="button" class="boton" id="cancelar">Cancelar</button>
 	  </div>
 	  
 	  <div class="caja">

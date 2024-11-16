@@ -9,11 +9,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header class="caja">
+  <header class="header">
     <img src="LogoInstitucionalUAN.png" alt="Logo UAN" class="logo" id="logoUAN">
   
-    <h1 class="titulo textBorder" id="titulo">Genera y Descarga Reportes</h1>
+    <h1 class="titleHeader textBorder" id="titulo">Genera y Descarga Reportes</h1>
+	
+	<div class="logo"><button class="boton botonHeader" id="cancelar" title="Salir"><i class="fas fa-sign-out-alt"></i></button></div>
   </header>
+  
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
 	
@@ -22,7 +25,6 @@
       <input type="date" id="fecha" class="input">
       <button class="boton" id="diario">Reporte Diario</button>
       <button class="boton" id="semanal">Reporte Semanal</button>
-	  <br><button class="boton" id="cancelar">Cancelar</button>
     </div>
 
 	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>
