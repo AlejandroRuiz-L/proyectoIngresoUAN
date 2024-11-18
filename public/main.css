@@ -106,12 +106,12 @@ body{
 }
 
 .deleteBtn{
-	background: linear-gradient(130deg, #c11616, #7f1d1d);
+	background: linear-gradient(135deg, #c11616, #7f1d1d);
 	font-size: 25px;
 }
 
 .deleteBtn:hover{
-	background: linear-gradient(10deg, #7f1d1d, #c11616);
+	background: linear-gradient(195deg, #c11616, #7f1d1d);
 }
 
 .link{

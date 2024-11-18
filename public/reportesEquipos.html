@@ -20,10 +20,17 @@
   <main class="container">
     <div id="loadingOverlay">Cargando. Por favor, espere...</div>
 	
-	<div class="caja" id="menu">
-	  <label for="serial" class="textBorder">Reporte de Equipo:</label>
-	  <input id="serial" class="input" type="text" placeholder="Serial del Equipo">
-	  <button id="buscar" class="boton" title="buscar"><i class="fas fa-search" style="font-size: 27px;"></i></button>
+	<div id="menu">
+	  <div class="caja">
+	    <label for="serial" class="textBorder">Reporte de Equipo:</label>
+	    <input id="serial" class="input" type="text" placeholder="Serial del Equipo">
+	    <button id="buscar" class="boton" title="Buscar"><i class="fas fa-search" style="font-size: 27px;"></i></button>
+	  </div>
+	  
+	  <div class="caja">
+	    <label class="textBorder" style="margin-top: 85px;">Reporte Completo de Equipos</label>
+		<button class="boton" id="fullReport" title="Reporte Completo"><i class="fas fa-download" style="font-size: 27px;"></i></button>
+	  </div>
 	</div>
 	
 	<button class="boton btn-flecha protected-content" id="backMenu" title="Menú Principal"><i class="fas fa-arrow-left"></i></button>

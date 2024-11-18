@@ -113,7 +113,7 @@ document.querySelector('#info').addEventListener('click', (event) => {
 		if (enable === 'false'){
 			window.location.href = 'devolver.html';
 		} else {
-			alert("El equipo ya fue devuelto.\nEstá disponible para préstamo.");
+			alert("El equipo está disponible para préstamo.");
 			return;
 		}
 	}

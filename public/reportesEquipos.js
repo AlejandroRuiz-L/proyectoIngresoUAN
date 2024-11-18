@@ -1,6 +1,6 @@
 import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 import { newBtn } from './functionsDate.js';
 
 const firebaseConfig = {//firebase PRESTAMOS
@@ -36,7 +36,7 @@ const headers = ['FECHA', 'DOCUMENTO', 'NOMBRE', 'CARGO', 'DEPENDENCIA', 'PRODUC
 const downloadBtn = document.querySelector('#downloadBtn');
 
 function showMenu(){
-	menu.style.display = 'flex';
+	menu.style.display = 'block';
 	backMenu.style.display = 'none';
 	info.style.display = 'none';
 	downloadBtn.style.display = 'none';
@@ -133,4 +133,60 @@ downloadBtn.addEventListener('click', () => {
 	XLSX.utils.book_append_sheet(wb, ws, "Reporte Equipo");
 	XLSX.writeFile(wb, `${dataDownload[0]}.xlsx`);
 	loading.style.display = 'none';
+});
+
+document.querySelector('#fullReport').addEventListener('click', async () => {
+	const docRef = collection(db, 'prestamos');
+	try {
+		loading.style.display = 'block';
+		const docSnap = await getDocs(docRef);
+		if (docSnap.empty){
+			alert("No hay préstamos para mostrar.");
+			return;
+		}
+		let totalLends = 0;
+		let totalPeople = 0;
+		let ids = []//identificaciones
+		for (let equipo of docSnap.docs){
+			const data = equipo.data();
+			for (let id in data){
+				if (!ids.includes(id)){
+					ids.push(`${id}`);
+					totalPeople += 1;
+				}
+				const prestamos = data[`${id}`].prestamos ?? {};
+				const devoluciones = data[`${id}`].devoluciones ?? {};
+				for (let date in prestamos){
+					let rows = [];
+					for (let time in prestamos[`${date}`]){//agrega los campos de la fila de acuerdo al encabezado
+						totalLends += 1;
+						const timeSplit = time.split('-');
+						let row = [date, id, data[`${id}`].nombre, data[`${id}`].cargo, data[`${id}`].dependencia, `${data[`${id}`].producto} ${data[`${id}`].marca} ${data[`${id}`].modelo}`];
+						row.push(`${timeSplit[0]}:${timeSplit[1]}`, prestamos[`${date}`][`${time}`].entrega, prestamos[`${date}`][`${time}`].observaciones);
+						rows.push(row);
+					};
+					let counter = 0;
+					for (let time in devoluciones[`${date}`]){
+						console.log(counter);
+						const timeSplit = time.split('-');
+						rows[counter].push(`${timeSplit[0]}:${timeSplit[1]}`, devoluciones[`${date}`][`${time}`].recibe, devoluciones[`${date}`][`${time}`].observaciones);
+						counter += 1;
+					};
+					for (let row of rows){ dataDownload.push(row) };
+				};
+			};
+		};
+		const infoReport = `${totalPeople} personas prestaron ${totalLends} veces los equipos`;
+		dataDownload.unshift(["Reporte_Prestamos_Equipos"], headers, [`${infoReport}`]);
+		const ws_data = dataDownload;//filas excel
+	    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+	    const wb = XLSX.utils.book_new();//libro de trabajo
+	    XLSX.utils.book_append_sheet(wb, ws, "Reporte Equipos");
+	    XLSX.writeFile(wb, `${dataDownload[0]}.xlsx`);
+	} catch (error){
+		alert("Error al realizar el reporte completo.");
+		console.log(`Error: ${error}`);
+	} finally {
+		loading.style.display = 'none';
+	}
 });
